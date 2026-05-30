@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Fieldwork Gallery — Thematic photographic explorations." />
+<title>Gallery — Prince Tomar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300;400;500;600;700&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f1e9d8;
+    --paper-2: #ebe2d0;
+    --ink: #141410;
+    --ink-soft: #5a564f;
+    --ink-mute: #9a9590;
+    --rule: #d4cdc0;
+    --accent: #b15a3a;
+    --accent-alt: #4a6d8c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--ink); }
+  body {
+    font-family: 'Spectral', serif;
+    font-size: 15px;
+    line-height: 1.6;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ========== HEADER ========== */
+  header {
+    position: sticky; top: 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    padding: 16px 28px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header .mark {
+    font-family: 'Cormorant', serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  header nav {
+    display: flex;
+    gap: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  header nav a {
+    padding: 6px 8px;
+    transition: color .2s ease;
+  }
+  header nav a:hover { color: var(--accent); }
+
+  /* ========== LAYOUT SWITCHER ========== */
+  .design-mode-switcher {
+    position: fixed;
+    top: 80px;
+    right: 28px;
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 8px;
+    display: flex;
+    gap: 4px;
+    z-index: 99;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+  .design-mode-switcher button {
+    padding: 6px 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--ink-mute);
+    cursor: pointer;
+    transition: all .2s ease;
+    border-radius: 2px;
+  }
+  .design-mode-switcher button.active {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+  }
+  .design-mode-switcher button:hover:not(.active) {
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+
+  /* ========== CARTOGRAPHIC LAYOUT ========== */
+  .gallery-cartographic {
+    padding: 80px 28px 28px;
+  }
+  .cartographic-hero {
+    max-width: 1200px;
+    margin: 0 auto 60px;
+  }
+  .cartographic-hero h1 {
+    font-family: 'Cormorant', serif;
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+  .cartographic-hero p {
+    font-size: 16px;
+    color: var(--ink-soft);
+    max-width: 600px;
+    line-height: 1.7;
+  }
+
+  .cartographic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .card-cartographic {
+    cursor: pointer;
+    transition: all .3s ease;
+  }
+  .card-cartographic:hover {
+    transform: translateY(-4px);
+  }
+  .card-cartographic-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .card-cartographic-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+    min-width: 24px;
+  }
+  .card-cartographic-title {
+    font-family: 'Cormorant', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .card-cartographic-preview {
+    height: 200px;
+    background: linear-gradient(135deg, var(--paper-2) 0%, var(--paper) 100%);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-mute);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+  }
+  .card-cartographic-meta {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* ========== TIMELINE LAYOUT ========== */
+  .gallery-timeline {
+    padding: 80px 28px 28px;
+  }
+  .timeline-hero {
+    max-width: 900px;
+    margin: 0 auto 80px;
+    text-align: center;
+  }
+  .timeline-hero h1 {
+    font-family: 'Cormorant', serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 24px;
+  }
+  .timeline-hero p {
+    font-size: 15px;
+    color: var(--ink-soft);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .timeline-container {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 100%;
+    background: var(--rule);
+  }
+
+  .timeline-item {
+    margin-bottom: 60px;
+    position: relative;
+  }
+  .timeline-item:nth-child(odd) .card-timeline {
+    margin-left: 0;
+    margin-right: auto;
+    width: 48%;
+  }
+  .timeline-item:nth-child(even) .card-timeline {
+    margin-left: auto;
+    margin-right: 0;
+    width: 48%;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border: 2px solid var(--paper);
+    border-radius: 50%;
+    z-index: 2;
+  }
+
+  .card-timeline {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    padding: 24px;
+    cursor: pointer;
+    transition: all .3s ease;
+    border-radius: 2px;
+  }
+  .card-timeline:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+  .card-timeline h3 {
+    font-family: 'Cormorant', serif;
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+  .card-timeline p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* ========== PORTAL LAYOUT ========== */
+  .gallery-portal {
+    padding: 80px 28px 28px;
+    min-height: 100vh;
+  }
+  .portal-hero {
+    max-width: 1200px;
+    margin: 0 auto 80px;
+  }
+  .portal-hero h1 {
+    font-family: 'Cormorant', serif;
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .portal-hero p {
+    font-size: 15px;
+    color: var(--ink-soft);
+    max-width: 600px;
+  }
+
+  .portal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .card-portal {
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 4px;
+    transition: all .3s ease;
+  }
+  .card-portal:hover {
+    transform: scale(1.02);
+  }
+  .card-portal-bg {
+    height: 320px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-alt) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 32px;
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .card-portal-bg::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at top-right, rgba(255,255,255,0.1), transparent);
+    pointer-events: none;
+  }
+  .card-portal h3 {
+    font-family: 'Cormorant', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .card-portal-desc {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    max-width: 280px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ========== MOBILE ========== */
+  @media (max-width: 768px) {
+    header { padding: 12px 16px; }
+    header nav { font-size: 9px; gap: 16px; }
+    .design-mode-switcher { top: 60px; right: 16px; font-size: 8px; }
+
+    .gallery-cartographic { padding: 70px 16px 16px; }
+    .cartographic-hero h1 { font-size: 32px; }
+    .cartographic-grid { grid-template-columns: 1fr; gap: 24px; }
+
+    .gallery-timeline { padding: 70px 16px 16px; }
+    .timeline-hero h1 { font-size: 36px; }
+    .timeline-container::before { display: none; }
+    .timeline-item:nth-child(odd) .card-timeline,
+    .timeline-item:nth-child(even) .card-timeline {
+      width: 100%;
+      margin: 0;
+    }
+    .timeline-dot { left: 16px; }
+    .timeline-item { margin-bottom: 40px; padding-left: 40px; }
+
+    .gallery-portal { padding: 70px 16px 16px; }
+    .portal-hero h1 { font-size: 32px; }
+    .portal-grid { grid-template-columns: 1fr; gap: 24px; }
+    .card-portal-bg { height: 240px; padding: 24px; }
+    .card-portal h3 { font-size: 24px; }
+  }
+
+  /* ========== HIDDEN LAYOUTS ========== */
+  .gallery-timeline,
+  .gallery-portal {
+    display: none;
+  }
+</style>
+</head>
+<body data-design="cartographic">
+
+<header>
+  <a href="/" class="mark">Prince <em style="font-style: italic;">Tomar</em></a>
+  <nav>
+    <a href="/">Portfolio</a>
+    <a href="#gallery">Gallery</a>
+  </nav>
+</header>
+
+<div class="design-mode-switcher">
+  <button class="active" data-mode="cartographic">Cartographic</button>
+  <button data-mode="timeline">Timeline</button>
+  <button data-mode="portal">Portal</button>
+</div>
+
+<!-- CARTOGRAPHIC -->
+<div class="gallery-cartographic" data-gallery="cartographic">
+  <div class="cartographic-hero">
+    <h1>Fieldwork</h1>
+    <p>A collection of thematic photographic explorations. Each series tells a distinct narrative through carefully curated sequences.</p>
+  </div>
+  <div class="cartographic-grid">
+    <div class="card-cartographic" data-exhibition="roads">
+      <div class="card-cartographic-header">
+        <span class="card-cartographic-number">01</span>
+        <h2 class="card-cartographic-title">Roads</h2>
+      </div>
+      <div class="card-cartographic-preview">[Roads of Ladakh]</div>
+      <p class="card-cartographic-meta">Roads in Ladakh are simultaneously less and more than what they stand for.</p>
+    </div>
+    <div class="card-cartographic" data-exhibition="traces">
+      <div class="card-cartographic-header">
+        <span class="card-cartographic-number">02</span>
+        <h2 class="card-cartographic-title">Traces</h2>
+      </div>
+      <div class="card-cartographic-preview">[Traces]</div>
+      <p class="card-cartographic-meta">The clear landscape of Ladakh appears empty, but never is.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="gallery-timeline" data-gallery="timeline">
+  <div class="timeline-hero">
+    <h1>Fieldwork</h1>
+    <p>A collection of thematic photographic explorations arranged in narrative order.</p>
+  </div>
+  <div class="timeline-container">
+    <div class="timeline-item" data-exhibition="roads">
+      <div class="timeline-dot"></div>
+      <div class="card-timeline">
+        <h3>Roads</h3>
+        <p>Roads in Ladakh are simultaneously less and more than what they stand for. A photographic exploration of infrastructure and landscape.</p>
+      </div>
+    </div>
+    <div class="timeline-item" data-exhibition="traces">
+      <div class="timeline-dot"></div>
+      <div class="card-timeline">
+        <h3>Traces</h3>
+        <p>The clear landscape of Ladakh appears empty, but never is. Human presence, visible and invisible, marks the terrain.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTAL -->
+<div class="gallery-portal" data-gallery="portal">
+  <div class="portal-hero">
+    <h1>Fieldwork</h1>
+    <p>Step into each thematic world.</p>
+  </div>
+  <div class="portal-grid">
+    <div class="card-portal" data-exhibition="roads">
+      <div class="card-portal-bg">
+        <h3>Roads</h3>
+        <p class="card-portal-desc">Roads in Ladakh are simultaneously less and more than what they stand for.</p>
+      </div>
+    </div>
+    <div class="card-portal" data-exhibition="traces">
+      <div class="card-portal-bg" style="background: linear-gradient(135deg, #6d7d4a 0%, #4a6d8c 100%);">
+        <h3>Traces</h3>
+        <p class="card-portal-desc">The clear landscape of Ladakh appears empty, but never is.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Layout switcher
+  document.querySelectorAll('.design-mode-switcher button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.mode;
+      document.querySelectorAll('.design-mode-switcher button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      document.querySelectorAll('[data-gallery]').forEach(el => el.style.display = 'none');
+      document.querySelector(`[data-gallery="${mode}"]`).style.display = 'block';
+      document.body.dataset.design = mode;
+    });
+  });
+
+  // Card click handlers
+  document.querySelectorAll('[data-exhibition]').forEach(card => {
+    card.addEventListener('click', () => {
+      const exhibition = card.dataset.exhibition;
+      // For now, just log. In final version, this would navigate to slideshow
+      console.log('Navigate to exhibition:', exhibition);
+      alert('Exhibition slideshow would open for: ' + exhibition);
+    });
+  });
+</script>
+
+</body>
+</html>

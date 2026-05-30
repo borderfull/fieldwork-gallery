@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Fieldwork Gallery — Thematic photographic explorations of Ladakh." />
+<title>Gallery — Prince Tomar</title>
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="favicon.svg" />
+<meta name="theme-color" content="#1c1814" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300;400;500;600;700&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f1e9d8;
+    --paper-2: #ebe2d0;
+    --ink: #141410;
+    --ink-soft: #5a564f;
+    --ink-mute: #9a9590;
+    --rule: #d4cdc0;
+    --accent: #b15a3a;
+    --accent-alt-1: #4a6d8c;
+    --accent-alt-2: #6d7d4a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--ink); }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Spectral', serif;
+    font-size: 15px;
+    line-height: 1.6;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ========== HEADER ========== */
+  header {
+    position: sticky; top: 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    padding: 16px 28px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header .mark {
+    font-family: 'Cormorant', serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  header nav {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+  }
+  .nav-portfolio {
+    color: var(--ink-mute);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    transition: color .2s ease;
+    font-style: italic;
+  }
+  .nav-portfolio:hover { color: var(--accent); }
+  .nav-divider {
+    color: var(--rule);
+    font-size: 12px;
+    user-select: none;
+  }
+  .nav-exhib {
+    color: var(--ink-mute);
+    padding: 6px 14px;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    transition: all .2s ease;
+    white-space: nowrap;
+  }
+  .nav-exhib:hover:not(.active) { color: var(--ink); background: var(--paper-2); }
+  .nav-exhib.active {
+    color: var(--ink);
+    border-top-color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .nav-toggle {
+    display: flex;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+  /* ========== SLIDESHOW ========== */
+  .slideshow {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .slideshow.active {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .slideshow-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    background: var(--paper-2);
+    border-right: 1px solid var(--rule);
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .slideshow-sidebar h2 {
+    font-family: 'Cormorant', serif;
+    font-size: 44px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .sidebar-desc {
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-desc .subtitle {
+    font-size: 15px;
+    font-style: italic;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+  .sidebar-desc .opening {
+    font-size: 15px;
+    font-style: italic;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+  .slideshow-counter {
+    margin-top: auto;
+    padding-top: 32px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    color: var(--ink-mute);
+  }
+  .slideshow-counter #current { color: var(--ink); }
+
+  .slideshow-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .slideshow-viewer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--paper);
+    padding: 20px 28px 0;
+  }
+
+  #viewer-slides {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity .6s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slide.active {
+    opacity: 1;
+  }
+  .slide img {
+    max-width: calc(100% - 24px);
+    max-height: calc(100% - 24px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    cursor: zoom-in;
+    opacity: 0;
+    transition: opacity .5s ease;
+  }
+  .slide img.loaded { opacity: 1; }
+
+  .slideshow-controls {
+    flex-shrink: 0;
+    align-self: center;
+    margin: 20px 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 20px;
+    background: transparent;
+    z-index: 20;
+  }
+  .slideshow-controls button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s ease;
+    font-family: 'Cormorant', serif;
+    line-height: 1;
+  }
+  .slideshow-controls button:hover {
+    background: var(--accent);
+    color: var(--paper);
+  }
+
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width .3s ease;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* ========== LIGHTBOX ========== */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(20, 16, 12, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .lightbox.open { display: flex; opacity: 1; }
+  .lightbox-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper-2);
+    padding: 24px 24px 42px 24px;
+    max-width: 86vw;
+    max-height: 88vh;
+    animation: lbIn .32s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+  @keyframes lbIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .lightbox-stage img {
+    max-width: calc(86vw - 48px);
+    max-height: calc(88vh - 48px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    opacity: 0;
+    transition: opacity .35s ease;
+  }
+  .lightbox-stage img.loaded { opacity: 1; }
+  .lightbox-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    pointer-events: none;
+    background: var(--paper-2);
+  }
+  .lightbox-caption {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .lightbox-district {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .lightbox-coords {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .lightbox-hint { display: none; }
+  .lightbox-close {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--ink-mute);
+    background: transparent;
+    color: var(--paper);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .3s ease;
+    font-family: 'Cormorant', serif;
+    line-height: 1;
+    z-index: 1001;
+  }
+  .lightbox-close:hover {
+    transform: rotate(90deg);
+    background: var(--paper);
+    color: var(--ink);
+    border-color: var(--paper);
+  }
+  .lightbox-nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--ink-mute);
+    background: transparent;
+    color: var(--paper);
+    font-size: 26px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s ease;
+    font-family: 'Cormorant', serif;
+    line-height: 1;
+    z-index: 1001;
+  }
+  .lightbox-nav:hover {
+    background: var(--paper);
+    color: var(--ink);
+    border-color: var(--paper);
+  }
+  .lightbox-prev { left: 16px; }
+  .lightbox-next { right: 16px; }
+
+
+
+
+
+  /* ========== MOBILE ========== */
+  @media (max-width: 768px) {
+    header { padding: 12px 16px; }
+    header nav { font-size: 9px; gap: 12px; }
+    .nav-divider { display: none; }
+
+    .slideshow-content { flex-direction: column; }
+    .slideshow-sidebar {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid var(--rule);
+      padding: 20px 16px;
+      max-height: none;
+    }
+    .slideshow-sidebar h2 { font-size: 28px; padding-bottom: 12px; margin-bottom: 12px; }
+    .sidebar-desc .subtitle,
+    .sidebar-desc .opening { font-size: 13px; }
+    .slideshow-counter { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--rule); }
+    .slideshow-viewer { padding: 16px 16px 0; }
+    .slideshow-controls { gap: 12px; margin: 12px 0 16px; }
+    .lightbox-nav { width: 40px; height: 40px; font-size: 22px; }
+    .lightbox-prev { left: 16px; }
+    .lightbox-next { right: 16px; }
+    .lightbox-close { top: 20px; right: 20px; width: 40px; height: 40px; font-size: 20px; }
+    .lightbox-stage { padding: 18px 18px 28px 18px; max-width: calc(100vw - 36px); max-height: calc(100vh - 36px); }
+    .lightbox-info { bottom: 16px; left: 18px; right: 18px; padding: 12px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="#" class="mark" id="brand-mark">Fieldwork <em style="font-style: italic;">Gallery</em></a>
+  <nav>
+    <a href="/" class="nav-portfolio">↩ Portfolio</a>
+    <span class="nav-divider">|</span>
+    <div class="nav-toggle">
+      <a href="#" class="nav-exhib active" data-exhibition="roads">Roads of Ladakh</a>
+      <a href="#" class="nav-exhib" data-exhibition="traces">Traces</a>
+    </div>
+  </nav>
+</header>
+
+<!-- SLIDESHOW -->
+<div class="slideshow active" id="slideshow">
+  <div class="slideshow-content">
+    <div class="slideshow-sidebar">
+      <h2 id="exhib-title">Roads</h2>
+      <div class="sidebar-desc">
+        <p class="subtitle" id="exhib-subtitle">Roads in Ladakh are simultaneously less and more than what they stand for.</p>
+        <p class="opening" id="exhib-opening"></p>
+      </div>
+      <div class="slideshow-counter">
+        <span id="current">1</span> / <span id="total">20</span>
+      </div>
+    </div>
+    <div class="slideshow-viewer">
+      <div id="viewer-slides"></div>
+      <div class="progress-bar" id="progress"></div>
+      <div class="slideshow-controls">
+        <button id="prev" aria-label="Previous">‹</button>
+        <button id="next" aria-label="Next">›</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <div class="lightbox-stage" id="lb-stage">
+    <img id="lb-img" alt="Enlarged exhibition image" />
+    <div class="lightbox-info">
+      <div class="lightbox-caption">
+        <div class="lightbox-district" id="lb-district"></div>
+        <div class="lightbox-coords" id="lb-coords"></div>
+      </div>
+      <div class="lightbox-hint">Esc · click outside to close</div>
+    </div>
+  </div>
+  <button class="lightbox-close" id="lb-close" aria-label="Close">×</button>
+  <button class="lightbox-nav lightbox-prev" id="lb-prev" aria-label="Previous">‹</button>
+  <button class="lightbox-nav lightbox-next" id="lb-next" aria-label="Next">›</button>
+</div>
+
+<script>
+const exhibitions = {
+  roads: {
+    title: 'Roads of Ladakh',
+    subtitle: 'Roads in Ladakh are simultaneously less and more than what they stand for.',
+    opening: 'They are material, they are social, they are noisy, they are symbolic, and they are moral.',
+    images: [
+      'images/roads/01.jpg',
+      'images/roads/02.jpg',
+      'images/roads/03.jpg',
+      'images/roads/04.jpg',
+      'images/roads/05.jpg',
+      'images/roads/06.jpg',
+      'images/roads/07.jpg',
+    ],
+    districts: [
+      { name: 'Nubra', coords: '35.42°N 77.52°E' },
+      { name: 'Nubra', coords: '35.42°N 77.52°E' },
+      { name: 'Khardung La', coords: '34.27°N 77.61°E' },
+      { name: 'Khardung La', coords: '34.27°N 77.61°E' },
+      { name: 'Leh', coords: '34.16°N 77.58°E' },
+      { name: 'Leh', coords: '34.16°N 77.58°E' },
+      { name: 'Leh', coords: '34.16°N 77.58°E' },
+    ]
+  },
+  traces: {
+    title: 'Traces',
+    subtitle: 'The clear landscape of Ladakh appears empty, but never is.',
+    opening: 'Seen from a lens of material traces, its relation to the social appears hidden in some corners, faded behind the dust,\nbut never absent.',
+    images: [
+      'images/traces/00.jpg',
+      'images/traces/01.jpg',
+      'images/traces/02.jpg',
+      'images/traces/03.jpg',
+      'images/traces/04.jpg',
+      'images/traces/05.jpg',
+    ],
+    districts: [
+      { name: 'Nubra', coords: '35.42°N 77.52°E' },
+      { name: 'Rangdum', coords: '33.54°N 77.03°E' },
+      { name: 'Zanskar', coords: '33.78°N 77.55°E' },
+      { name: 'Zanskar', coords: '33.78°N 77.55°E' },
+      { name: 'Markha Valley', coords: '33.92°N 77.65°E' },
+      { name: 'Ladakh', coords: '34.16°N 77.58°E' },
+    ],
+  }
+};
+
+let currentExhibition = null;
+let currentIdx = 0;
+const slideshow = document.getElementById('slideshow');
+const titleEl = document.getElementById('exhib-title');
+const subtitleEl = document.getElementById('exhib-subtitle');
+const openingEl = document.getElementById('exhib-opening');
+const currentEl = document.getElementById('current');
+const totalEl = document.getElementById('total');
+const progressBar = document.getElementById('progress');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const viewerSlides = document.getElementById('viewer-slides');
+
+// Exhibition nav links
+document.querySelectorAll('.nav-exhib').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    openExhibition(link.dataset.exhibition);
+  });
+});
+
+// Brand mark returns to the first exhibition
+const firstExhibition = Object.keys(exhibitions)[0];
+document.getElementById('brand-mark').addEventListener('click', e => {
+  e.preventDefault();
+  openExhibition(firstExhibition);
+});
+
+function openExhibition(exhibKey) {
+  currentExhibition = exhibKey;
+  currentIdx = 0;
+  const exhib = exhibitions[exhibKey];
+
+  // Clear and populate slides
+  viewerSlides.innerHTML = '';
+  exhib.images.forEach((src, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide';
+    if (i === 0) div.classList.add('active');
+    const img = document.createElement('img');
+    img.alt = 'Exhibition image';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    if (img.complete) img.classList.add('loaded');
+    img.addEventListener('load', () => img.classList.add('loaded'));
+    img.src = src;
+    div.appendChild(img);
+    viewerSlides.appendChild(div);
+  });
+
+  // Update sidebar info
+  titleEl.textContent = exhib.title;
+  subtitleEl.textContent = exhib.subtitle;
+  openingEl.innerHTML = exhib.opening.replace(/\n/g, '<br>');
+  openingEl.style.display = exhib.opening ? 'block' : 'none';
+  totalEl.textContent = exhib.images.length;
+
+  // Update active nav link
+  document.querySelectorAll('.nav-exhib').forEach(l => l.classList.remove('active'));
+  document.querySelector(`.nav-exhib[data-exhibition="${exhibKey}"]`).classList.add('active');
+
+  goTo(0);
+}
+
+function goTo(idx) {
+  if (!currentExhibition) return;
+  const exhib = exhibitions[currentExhibition];
+  idx = (idx + exhib.images.length) % exhib.images.length;
+  currentIdx = idx;
+
+  const slides = viewerSlides.querySelectorAll('.slide');
+  slides.forEach(s => s.classList.remove('active'));
+  slides[idx].classList.add('active');
+
+  currentEl.textContent = idx + 1;
+  progressBar.style.width = ((idx + 1) / exhib.images.length * 100) + '%';
+
+  // Preload the next image for a seamless transition
+  const nextSrc = exhib.images[(idx + 1) % exhib.images.length];
+  new Image().src = nextSrc;
+
+  // Keep the lightbox in sync if open
+  if (lightbox.classList.contains('open')) lbRender();
+}
+
+/* ===== LIGHTBOX ===== */
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lb-img');
+const lbCurrent = document.getElementById('lb-current');
+const lbTotal = document.getElementById('lb-total');
+
+function lbRender() {
+  const exhib = exhibitions[currentExhibition];
+  lbImg.classList.remove('loaded');
+  lbImg.onload = () => lbImg.classList.add('loaded');
+  lbImg.src = exhib.images[currentIdx];
+  
+  // Display district metadata if available
+  if (exhib.districts && exhib.districts[currentIdx]) {
+    const district = exhib.districts[currentIdx];
+    document.getElementById('lb-district').textContent = district.name;
+    document.getElementById('lb-coords').textContent = district.coords;
+  } else {
+    document.getElementById('lb-district').textContent = '';
+    document.getElementById('lb-coords').textContent = '';
+  }
+}
+function openLightbox() {
+  lightbox.classList.add('open');
+  lightbox.setAttribute('aria-hidden', 'false');
+  lbRender();
+}
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  lightbox.setAttribute('aria-hidden', 'true');
+}
+
+viewerSlides.addEventListener('click', e => {
+  if (e.target.tagName === 'IMG') openLightbox();
+});
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lb-prev').addEventListener('click', () => goTo(currentIdx - 1));
+document.getElementById('lb-next').addEventListener('click', () => goTo(currentIdx + 1));
+lightbox.addEventListener('click', e => {
+  if (e.target === lightbox || e.target.id === 'lb-stage') closeLightbox();
+});
+
+// Controls
+prevBtn.addEventListener('click', () => goTo(currentIdx - 1));
+nextBtn.addEventListener('click', () => goTo(currentIdx + 1));
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && lightbox.classList.contains('open')) { closeLightbox(); return; }
+  if (!currentExhibition) return;
+  if (e.key === 'ArrowLeft') goTo(currentIdx - 1);
+  if (e.key === 'ArrowRight') goTo(currentIdx + 1);
+  if (e.key === ' ') { e.preventDefault(); goTo(currentIdx + 1); }
+});
+
+// Touch swipe
+viewerSlides.addEventListener('touchstart', e => {
+  window.__touchStart = e.touches[0].clientX;
+});
+viewerSlides.addEventListener('touchend', e => {
+  const touchEnd = e.changedTouches[0].clientX;
+  if (window.__touchStart - touchEnd > 50) goTo(currentIdx + 1);
+  if (touchEnd - window.__touchStart > 50) goTo(currentIdx - 1);
+});
+
+// Auto-load Roads on page load
+openExhibition('roads');
+</script>
+
+</body>
+</html>
