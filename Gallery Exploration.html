@@ -3,21 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Fieldwork Gallery — Prince Tomar</title>
-<meta name="description" content="Fieldwork Gallery — Thematic photographic explorations of Ladakh." />
-<!-- Favicon -->
-<link rel="icon" type="image/svg+xml" href="favicon.svg" />
-<link rel="apple-touch-icon" href="favicon.svg" />
-<meta name="theme-color" content="#1c1814" />
-<!-- Open Graph / Social -->
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Fieldwork Gallery — Prince Tomar" />
-<meta property="og:description" content="Thematic photographic explorations of Ladakh." />
-<meta property="og:image" content="assets/roads-preview.jpg" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Fieldwork Gallery — Prince Tomar" />
-<meta name="twitter:description" content="Thematic photographic explorations of Ladakh." />
-<meta name="twitter:image" content="assets/roads-preview.jpg" />
+<title>Fieldwork Gallery — Layout Exploration</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=EB+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lora:ital,wght@0,300;0,400;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=DM+Serif+Display:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Noto+Sans:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
@@ -38,7 +24,6 @@
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html, body, #root { width: 100%; height: 100%; overflow: hidden; }
   button { border: none; background: transparent; cursor: pointer; font-family: inherit; }
-  a { text-decoration: none; color: inherit; }
 
   /* ── Image transition animations ── */
   @keyframes enterNext {
@@ -77,35 +62,35 @@ const EXHIBS = {
     subtitle: 'Roads in Ladakh are simultaneously less and more than what they stand for.',
     opening: 'They are material, they are social, they are noisy, they are symbolic, and they are moral.',
     images: [
-      'images/roads/01.jpg', 'images/roads/02.jpg', 'images/roads/03.jpg',
-      'images/roads/04.jpg', 'images/roads/05.jpg', 'images/roads/06.jpg', 'images/roads/07.jpg'
-    ],
+    'images/roads/01.jpg', 'images/roads/02.jpg', 'images/roads/03.jpg',
+    'images/roads/04.jpg', 'images/roads/05.jpg', 'images/roads/06.jpg', 'images/roads/07.jpg'],
+
     districts: [
-      { name: 'Nubra', coords: '35.42°N  77.52°E' },
-      { name: 'Nubra', coords: '35.42°N  77.52°E' },
-      { name: 'Khardung La', coords: '34.27°N  77.61°E' },
-      { name: 'Khardung La', coords: '34.27°N  77.61°E' },
-      { name: 'Leh', coords: '34.16°N  77.58°E' },
-      { name: 'Leh', coords: '34.16°N  77.58°E' },
-      { name: 'Leh', coords: '34.16°N  77.58°E' }
-    ]
+    { name: 'Nubra', coords: '35.42°N  77.52°E' },
+    { name: 'Nubra', coords: '35.42°N  77.52°E' },
+    { name: 'Khardung La', coords: '34.27°N  77.61°E' },
+    { name: 'Khardung La', coords: '34.27°N  77.61°E' },
+    { name: 'Leh', coords: '34.16°N  77.58°E' },
+    { name: 'Leh', coords: '34.16°N  77.58°E' },
+    { name: 'Leh', coords: '34.16°N  77.58°E' }]
+
   },
   traces: {
     title: 'Traces',
     subtitle: 'The clear landscape of Ladakh appears empty, but never is.',
     opening: 'Seen from a lens of material traces, its relation to the social appears hidden in some corners, faded behind the dust,\nbut never absent.',
     images: [
-      'images/traces/00.jpg', 'images/traces/01.jpg', 'images/traces/02.jpg',
-      'images/traces/03.jpg', 'images/traces/04.jpg', 'images/traces/05.jpg'
-    ],
+    'images/traces/00.jpg', 'images/traces/01.jpg', 'images/traces/02.jpg',
+    'images/traces/03.jpg', 'images/traces/04.jpg', 'images/traces/05.jpg'],
+
     districts: [
-      { name: 'Nubra', coords: '35.42°N  77.52°E' },
-      { name: 'Rangdum', coords: '33.54°N  77.03°E' },
-      { name: 'Zanskar', coords: '33.78°N  77.55°E' },
-      { name: 'Zanskar', coords: '33.78°N  77.55°E' },
-      { name: 'Markha Valley', coords: '33.92°N  77.65°E' },
-      { name: 'Ladakh', coords: '34.16°N  77.58°E' }
-    ]
+    { name: 'Nubra', coords: '35.42°N  77.52°E' },
+    { name: 'Rangdum', coords: '33.54°N  77.03°E' },
+    { name: 'Zanskar', coords: '33.78°N  77.55°E' },
+    { name: 'Zanskar', coords: '33.78°N  77.55°E' },
+    { name: 'Markha Valley', coords: '33.92°N  77.65°E' },
+    { name: 'Ladakh', coords: '34.16°N  77.58°E' }]
+
   }
 };
 
@@ -121,7 +106,7 @@ const TITLE_FONTS = [
   'EB Garamond',
   'DM Serif Display',
   'Libre Baskerville',
-  'Noto Sans'
+  'Noto Sans',
 ];
 
 const BODY_FONTS = [
@@ -129,7 +114,7 @@ const BODY_FONTS = [
   'Lora',
   'Crimson Pro',
   'EB Garamond',
-  'Cormorant'
+  'Cormorant',
 ];
 
 function Gallery() {
@@ -144,7 +129,6 @@ function Gallery() {
   const muteCol  = isLight ? '#8a7a6e' : '#8a7a6e';
   const arrowBorder = isLight ? 'rgba(28,24,20,0.22)' : 'rgba(241,233,216,0.18)';
   const navBorder   = isLight ? 'rgba(0,0,0,0.07)' : 'rgba(255,255,255,0.05)';
-
   const [idx, setIdx] = useState(0);
   const [layers, setLayers] = useState([]);
   const [busy, setBusy] = useState(false);
@@ -174,9 +158,9 @@ function Gallery() {
     setBadgeVisible(false);
 
     setLayers((prev) => [
-      ...prev.map((l) => ({ ...l, cls: 'img-exit' })),
-      { id, src: exhib.images[newIdx], cls }
-    ]);
+    ...prev.map((l) => ({ ...l, cls: 'img-exit' })),
+    { id, src: exhib.images[newIdx], cls }]
+    );
 
     setTimeout(() => {
       setIdx(newIdx);
@@ -198,8 +182,8 @@ function Gallery() {
 
   /* Share */
   const share = () => {
-    if (navigator.share) navigator.share({ title: 'Fieldwork Gallery', url: window.location.href });
-    else navigator.clipboard && navigator.clipboard.writeText(window.location.href);
+    if (navigator.share) navigator.share({ title: 'Fieldwork Gallery', url: window.location.href });else
+    navigator.clipboard && navigator.clipboard.writeText(window.location.href);
   };
 
   const navBtnStyle = (active) => ({
@@ -253,6 +237,7 @@ function Gallery() {
             flexShrink: 0,
             transition: 'color .18s'
           }}>
+          
           ← Portfolio
         </a>
 
@@ -270,18 +255,19 @@ function Gallery() {
             marginRight: 28,
             flexShrink: 0
           }}>
+          
           Fieldwork Gallery
         </button>
 
         <div style={{ width: 1, height: 14, background: 'rgba(241,233,216,0.1)', marginRight: 20, flexShrink: 0 }}></div>
 
-        {/* Exhibition toggles */}
+        {/* Exhibition toggles — second divider */}
         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-          {Object.entries(EXHIBS).map(([key, ex]) => (
-            <button key={key} onClick={() => setExhibKey(key)} style={navBtnStyle(exhibKey === key)}>
+          {Object.entries(EXHIBS).map(([key, ex]) =>
+          <button key={key} onClick={() => setExhibKey(key)} style={navBtnStyle(exhibKey === key)}>
               {ex.title}
             </button>
-          ))}
+          )}
         </div>
 
         <div style={{ flex: 1 }}></div>
@@ -296,6 +282,7 @@ function Gallery() {
             color: muteCol,
             transition: 'color .18s'
           }}>
+          
           Share
         </button>
       </nav>
@@ -337,17 +324,17 @@ function Gallery() {
               transition: 'color .4s'
             }}>
               {exhib.subtitle}
-              {exhib.opening && (
-                <>
+              {exhib.opening &&
+              <>
                   <br /><br />
-                  {exhib.opening.split('\n').map((line, i, arr) => (
-                    <React.Fragment key={i}>
+                  {exhib.opening.split('\n').map((line, i, arr) =>
+                <React.Fragment key={i}>
                       {line}
                       {i < arr.length - 1 && <br />}
                     </React.Fragment>
-                  ))}
+                )}
                 </>
-              )}
+              }
             </div>
           </div>
 
@@ -397,56 +384,56 @@ function Gallery() {
 
         {/* ── Right: image with dark frame ── */}
         <div style={{ flex: 1, background: bg, padding: '14px 14px 14px 0', overflow: 'hidden', transition: 'background .4s' }}>
-          <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
-            {layers.map((layer) => (
-              <img
-                key={layer.id}
-                src={layer.src}
-                alt=""
-                className={layer.cls}
-                style={{
-                  position: 'absolute', inset: 0,
-                  width: '100%', height: '100%',
-                  objectFit: 'cover',
-                  display: 'block'
-                }}
-              />
-            ))}
+        <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+          {layers.map((layer) =>
+            <img
+              key={layer.id}
+              src={layer.src}
+              alt=""
+              className={layer.cls}
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                objectFit: 'cover',
+                display: 'block'
+              }} />
 
-            {/* District badge */}
-            {district && (
-              <div style={{
-                position: 'absolute', bottom: 28, left: 28,
-                padding: '10px 16px',
-                background: 'rgba(20,16,12,0.60)',
-                backdropFilter: 'blur(8px)',
-                opacity: badgeVisible ? 1 : 0,
-                transition: 'opacity .35s ease',
-                pointerEvents: 'none'
-              }}>
-                <div style={{
-                  fontFamily: 'Cormorant, serif',
-                  fontSize: 16, color: 'var(--paper)',
-                  letterSpacing: '0.02em'
-                }}>
-                  {district.name}
-                </div>
-                <div style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
-                  fontSize: 10,
-                  color: 'rgba(241,233,216,0.52)',
-                  letterSpacing: '0.1em',
-                  marginTop: 3
-                }}>
-                  {district.coords}
-                </div>
-              </div>
             )}
-          </div>
+
+          {/* District badge */}
+          {district &&
+            <div style={{
+              position: 'absolute', bottom: 28, left: 28,
+              padding: '10px 16px',
+              background: 'rgba(20,16,12,0.60)',
+              backdropFilter: 'blur(8px)',
+              opacity: badgeVisible ? 1 : 0,
+              transition: 'opacity .35s ease',
+              pointerEvents: 'none'
+            }}>
+              <div style={{
+                fontFamily: 'Cormorant, serif',
+                fontSize: 16, color: 'var(--paper)',
+                letterSpacing: '0.02em'
+              }}>
+                {district.name}
+              </div>
+              <div style={{
+                fontFamily: 'IBM Plex Mono, monospace',
+                fontSize: 10,
+                color: 'rgba(241,233,216,0.52)',
+                letterSpacing: '0.1em',
+                marginTop: 3
+              }}>
+                {district.coords}
+              </div>
+            </div>
+            }
+        </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<Gallery />);
