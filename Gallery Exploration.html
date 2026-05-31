@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fieldwork Gallery — Layout Exploration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=EB+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lora:ital,wght@0,300;0,400;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=DM+Serif+Display:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Noto+Sans:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<style>
+  :root {
+    --paper:    #f1e9d8;
+    --paper-2:  #ebe0c8;
+    --ink:      #1c1814;
+    --ink-soft: #4a3f35;
+    --ink-mute: #8a7a6e;
+    --accent:   #c4603a;
+    --rule:     #d4c4ae;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+  button { border: none; background: transparent; cursor: pointer; font-family: inherit; }
+
+  /* ── Image transition animations ── */
+  @keyframes enterNext {
+    from { opacity: 0; transform: scale(1.04) translateX(18px); }
+    to   { opacity: 1; transform: scale(1) translateX(0); }
+  }
+  @keyframes enterPrev {
+    from { opacity: 0; transform: scale(1.04) translateX(-18px); }
+    to   { opacity: 1; transform: scale(1) translateX(0); }
+  }
+  @keyframes exitImg {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(0.97); }
+  }
+  @keyframes enterExhib {
+    from { opacity: 0; transform: scale(1.05); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .img-active       { opacity: 1; }
+  .img-enter-next   { animation: enterNext  560ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  .img-enter-prev   { animation: enterPrev  560ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  .img-enter-exhib  { animation: enterExhib 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  .img-exit         { animation: exitImg    380ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useRef, useCallback } = React;
+
+const EXHIBS = {
+  roads: {
+    title: 'Roads of Ladakh',
+    subtitle: 'Roads in Ladakh are simultaneously less and more than what they stand for.',
+    opening: 'They are material, they are social, they are noisy, they are symbolic, and they are moral.',
+    images: [
+    'images/roads/01.jpg', 'images/roads/02.jpg', 'images/roads/03.jpg',
+    'images/roads/04.jpg', 'images/roads/05.jpg', 'images/roads/06.jpg', 'images/roads/07.jpg'],
+
+    districts: [
+    { name: 'Nubra', coords: '35.42°N  77.52°E' },
+    { name: 'Nubra', coords: '35.42°N  77.52°E' },
+    { name: 'Khardung La', coords: '34.27°N  77.61°E' },
+    { name: 'Khardung La', coords: '34.27°N  77.61°E' },
+    { name: 'Leh', coords: '34.16°N  77.58°E' },
+    { name: 'Leh', coords: '34.16°N  77.58°E' },
+    { name: 'Leh', coords: '34.16°N  77.58°E' }]
+
+  },
+  traces: {
+    title: 'Traces',
+    subtitle: 'The clear landscape of Ladakh appears empty, but never is.',
+    opening: 'Seen from a lens of material traces, its relation to the social appears hidden in some corners, faded behind the dust,\nbut never absent.',
+    images: [
+    'images/traces/00.jpg', 'images/traces/01.jpg', 'images/traces/02.jpg',
+    'images/traces/03.jpg', 'images/traces/04.jpg', 'images/traces/05.jpg'],
+
+    districts: [
+    { name: 'Nubra', coords: '35.42°N  77.52°E' },
+    { name: 'Rangdum', coords: '33.54°N  77.03°E' },
+    { name: 'Zanskar', coords: '33.78°N  77.55°E' },
+    { name: 'Zanskar', coords: '33.78°N  77.55°E' },
+    { name: 'Markha Valley', coords: '33.92°N  77.65°E' },
+    { name: 'Ladakh', coords: '34.16°N  77.58°E' }]
+
+  }
+};
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "titleFont": "Noto Sans",
+  "bodyFont": "Cormorant",
+  "theme": "dark"
+}/*EDITMODE-END*/;
+
+const TITLE_FONTS = [
+  'Cormorant',
+  'Playfair Display',
+  'EB Garamond',
+  'DM Serif Display',
+  'Libre Baskerville',
+  'Noto Sans',
+];
+
+const BODY_FONTS = [
+  'Spectral',
+  'Lora',
+  'Crimson Pro',
+  'EB Garamond',
+  'Cormorant',
+];
+
+function Gallery() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [exhibKey, setExhibKey] = useState('roads');
+
+  const isLight = t.theme === 'light';
+  const bg       = isLight ? '#f3ecd9' : '#1c1814';
+  const panelBg  = isLight ? '#f3ecd9' : '#1c1814';
+  const titleCol = isLight ? '#1c1814' : '#f1e9d8';
+  const descCol  = isLight ? 'rgba(28,24,20,0.62)' : 'rgba(241,233,216,0.68)';
+  const muteCol  = isLight ? '#8a7a6e' : '#8a7a6e';
+  const arrowBorder = isLight ? 'rgba(28,24,20,0.22)' : 'rgba(241,233,216,0.18)';
+  const navBorder   = isLight ? 'rgba(0,0,0,0.07)' : 'rgba(255,255,255,0.05)';
+  const [idx, setIdx] = useState(0);
+  const [layers, setLayers] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [badgeVisible, setBadgeVisible] = useState(true);
+  const layerId = useRef(0);
+
+  const exhib = EXHIBS[exhibKey];
+  const total = exhib.images.length;
+  const district = exhib.districts[idx];
+
+  /* Init / exhibition switch */
+  useEffect(() => {
+    const id = ++layerId.current;
+    setLayers([{ id, src: exhib.images[0], cls: 'img-enter-exhib' }]);
+    setIdx(0);
+    setBadgeVisible(true);
+    setBusy(false);
+  }, [exhibKey]);
+
+  /* Navigate */
+  const go = useCallback((n) => {
+    if (busy) return;
+    const newIdx = (idx + n + total) % total;
+    const id = ++layerId.current;
+    const cls = n > 0 ? 'img-enter-next' : 'img-enter-prev';
+    setBusy(true);
+    setBadgeVisible(false);
+
+    setLayers((prev) => [
+    ...prev.map((l) => ({ ...l, cls: 'img-exit' })),
+    { id, src: exhib.images[newIdx], cls }]
+    );
+
+    setTimeout(() => {
+      setIdx(newIdx);
+      setLayers([{ id, src: exhib.images[newIdx], cls: 'img-active' }]);
+      setBusy(false);
+      setTimeout(() => setBadgeVisible(true), 80);
+    }, 480);
+  }, [busy, idx, total, exhib]);
+
+  /* Keyboard */
+  useEffect(() => {
+    const h = (e) => {
+      if (e.key === 'ArrowRight') go(1);
+      if (e.key === 'ArrowLeft') go(-1);
+    };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [go]);
+
+  /* Share */
+  const share = () => {
+    if (navigator.share) navigator.share({ title: 'Fieldwork Gallery', url: window.location.href });else
+    navigator.clipboard && navigator.clipboard.writeText(window.location.href);
+  };
+
+  const navBtnStyle = (active) => ({
+    fontFamily: 'IBM Plex Mono, monospace',
+    fontSize: 10,
+    letterSpacing: '0.12em',
+    textTransform: 'uppercase',
+    color: active ? titleCol : muteCol,
+    padding: '6px 16px',
+    paddingBottom: 4,
+    borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
+    marginBottom: -1,
+    transition: 'color .18s, border-color .18s'
+  });
+
+  const arrowStyle = (disabled) => ({
+    width: 40, height: 40,
+    borderRadius: '50%',
+    border: `1px solid ${arrowBorder}`,
+    color: titleCol,
+    fontSize: 22,
+    fontFamily: 'Cormorant, serif',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    transition: 'border-color .2s, background .2s',
+    opacity: disabled ? 0.35 : 1
+  });
+
+  return (
+    <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column', background: bg, overflow: 'hidden', transition: 'background .4s' }}>
+
+      {/* ── Nav bar ── */}
+      <nav style={{
+        height: 50, flexShrink: 0,
+        display: 'flex', alignItems: 'center',
+        padding: '0 24px 0 32px',
+        borderBottom: `1px solid ${navBorder}`,
+        transition: 'border-color .4s'
+      }}>
+
+        {/* Back to portfolio */}
+        <a
+          href="#"
+          id="portfolio-link"
+          style={{
+            fontFamily: 'IBM Plex Mono, monospace',
+            fontSize: 10, letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: muteCol,
+            textDecoration: 'none',
+            marginRight: 20,
+            flexShrink: 0,
+            transition: 'color .18s'
+          }}>
+          
+          ← Portfolio
+        </a>
+
+        <div style={{ width: 1, height: 14, background: 'rgba(241,233,216,0.1)', marginRight: 20, flexShrink: 0 }}></div>
+
+        {/* Logo */}
+        <button
+          onClick={() => {setExhibKey('roads');}}
+          style={{
+            fontFamily: 'Cormorant, serif',
+            fontSize: 18,
+            color: titleCol,
+            opacity: 0.88,
+            letterSpacing: '0.01em',
+            marginRight: 28,
+            flexShrink: 0
+          }}>
+          
+          Fieldwork Gallery
+        </button>
+
+        <div style={{ width: 1, height: 14, background: 'rgba(241,233,216,0.1)', marginRight: 20, flexShrink: 0 }}></div>
+
+        {/* Exhibition toggles — second divider */}
+        <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+          {Object.entries(EXHIBS).map(([key, ex]) =>
+          <button key={key} onClick={() => setExhibKey(key)} style={navBtnStyle(exhibKey === key)}>
+              {ex.title}
+            </button>
+          )}
+        </div>
+
+        <div style={{ flex: 1 }}></div>
+
+        {/* Share */}
+        <button
+          onClick={share}
+          style={{
+            fontFamily: 'IBM Plex Mono, monospace',
+            fontSize: 10, letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: muteCol,
+            transition: 'color .18s'
+          }}>
+          
+          Share
+        </button>
+      </nav>
+
+      {/* ── Main ── */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+
+        {/* ── Left panel ── */}
+        <div style={{
+          width: 380, flexShrink: 0,
+          display: 'flex', flexDirection: 'column',
+          padding: '48px 48px 44px',
+          background: panelBg,
+          transition: 'background .4s'
+        }}>
+
+          {/* Title + description */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{
+              fontFamily: `'${t.titleFont}', sans-serif`,
+              fontSize: 44, fontWeight: 300,
+              color: titleCol,
+              lineHeight: 1.06,
+              letterSpacing: '-0.01em',
+              marginBottom: 24,
+              transition: 'color .4s'
+            }}>
+              {exhib.title}
+            </div>
+
+            <div style={{ width: 30, height: 1, background: 'var(--accent)', marginBottom: 26 }}></div>
+
+            <div style={{
+              fontFamily: `'${t.bodyFont}', serif`,
+              fontStyle: 'italic', fontWeight: 300,
+              fontSize: 18.5,
+              color: descCol,
+              lineHeight: 1.82,
+              transition: 'color .4s'
+            }}>
+              {exhib.subtitle}
+              {exhib.opening &&
+              <>
+                  <br /><br />
+                  {exhib.opening.split('\n').map((line, i, arr) =>
+                <React.Fragment key={i}>
+                      {line}
+                      {i < arr.length - 1 && <br />}
+                    </React.Fragment>
+                )}
+                </>
+              }
+            </div>
+          </div>
+
+          {/* Tweaks panel */}
+          <TweaksPanel>
+            <TweakSection label="Theme" />
+            <TweakRadio
+              label="Mode"
+              value={t.theme}
+              options={['dark', 'light']}
+              onChange={(v) => setTweak('theme', v)}
+            />
+            <TweakSection label="Title font" />
+            <TweakSelect
+              label="Typeface"
+              value={t.titleFont}
+              options={TITLE_FONTS}
+              onChange={(v) => setTweak('titleFont', v)}
+            />
+            <TweakSection label="Description font" />
+            <TweakSelect
+              label="Typeface"
+              value={t.bodyFont}
+              options={BODY_FONTS}
+              onChange={(v) => setTweak('bodyFont', v)}
+            />
+          </TweaksPanel>
+
+          {/* Counter + arrows */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{
+              fontFamily: 'IBM Plex Mono, monospace',
+              fontSize: 11, letterSpacing: '0.1em',
+              color: muteCol,
+              transition: 'color .4s'
+            }}>
+              <span style={{ color: titleCol }}>{String(idx + 1).padStart(2, '0')}</span>
+              {' '}—{' '}
+              {String(total).padStart(2, '0')}
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={() => go(-1)} style={arrowStyle(busy)}>‹</button>
+              <button onClick={() => go(1)} style={arrowStyle(busy)}>›</button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Right: image with dark frame ── */}
+        <div style={{ flex: 1, background: bg, padding: '14px 14px 14px 0', overflow: 'hidden', transition: 'background .4s' }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+          {layers.map((layer) =>
+            <img
+              key={layer.id}
+              src={layer.src}
+              alt=""
+              className={layer.cls}
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                objectFit: 'cover',
+                display: 'block'
+              }} />
+
+            )}
+
+          {/* District badge */}
+          {district &&
+            <div style={{
+              position: 'absolute', bottom: 28, left: 28,
+              padding: '10px 16px',
+              background: 'rgba(20,16,12,0.60)',
+              backdropFilter: 'blur(8px)',
+              opacity: badgeVisible ? 1 : 0,
+              transition: 'opacity .35s ease',
+              pointerEvents: 'none'
+            }}>
+              <div style={{
+                fontFamily: 'Cormorant, serif',
+                fontSize: 16, color: 'var(--paper)',
+                letterSpacing: '0.02em'
+              }}>
+                {district.name}
+              </div>
+              <div style={{
+                fontFamily: 'IBM Plex Mono, monospace',
+                fontSize: 10,
+                color: 'rgba(241,233,216,0.52)',
+                letterSpacing: '0.1em',
+                marginTop: 3
+              }}>
+                {district.coords}
+              </div>
+            </div>
+            }
+        </div>
+        </div>
+      </div>
+    </div>);
+
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Gallery />);
+</script>
+</body>
+</html>
