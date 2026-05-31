@@ -18,47 +18,41 @@
 <meta name="twitter:image" content="assets/roads-preview.jpg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Sans:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&family=Noto+Sans:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <style>
   :root {
     --paper:    #f1e9d8;
-    --paper-2:  #ebe0c8;
     --ink:      #1c1814;
-    --ink-soft: #4a3f35;
     --ink-mute: #8a7a6e;
     --accent:   #c4603a;
-    --rule:     #d4c4ae;
   }
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+  html, body, #root { width: 100%; height: 100%; background: #1c1814; }
+  body { overflow: hidden; }
   button { border: none; background: transparent; cursor: pointer; font-family: inherit; }
   a { text-decoration: none; color: inherit; }
 
-  @keyframes enterNext {
-    from { opacity: 0; transform: scale(1.04) translateX(18px); }
-    to   { opacity: 1; transform: scale(1) translateX(0); }
+  /* ── Faster transitions ── */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
-  @keyframes enterPrev {
-    from { opacity: 0; transform: scale(1.04) translateX(-18px); }
-    to   { opacity: 1; transform: scale(1) translateX(0); }
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to   { opacity: 0; }
   }
-  @keyframes exitImg {
-    from { opacity: 1; transform: scale(1); }
-    to   { opacity: 0; transform: scale(0.97); }
-  }
-  @keyframes enterExhib {
-    from { opacity: 0; transform: scale(1.05); }
-    to   { opacity: 1; transform: scale(1); }
-  }
+  .img-enter { animation: fadeIn  240ms ease forwards; }
+  .img-exit  { animation: fadeOut 180ms ease forwards; }
+  .img-active { opacity: 1; }
 
-  .img-active       { opacity: 1; }
-  .img-enter-next   { animation: enterNext  560ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-  .img-enter-prev   { animation: enterPrev  560ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-  .img-enter-exhib  { animation: enterExhib 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-  .img-exit         { animation: exitImg    380ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  /* ── Mobile layout ── */
+  @media (max-width: 680px) {
+    body { overflow: auto; }
+    #root { height: auto; min-height: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -73,17 +67,17 @@ const EXHIBS = {
     subtitle: 'Roads in Ladakh are simultaneously less and more than what they stand for.',
     opening: 'They are material, they are social, they are noisy, they are symbolic, and they are moral.',
     images: [
-      'images/roads/01.jpg', 'images/roads/02.jpg', 'images/roads/03.jpg',
-      'images/roads/04.jpg', 'images/roads/05.jpg', 'images/roads/06.jpg', 'images/roads/07.jpg'
+      'images/roads/01.jpg','images/roads/02.jpg','images/roads/03.jpg',
+      'images/roads/04.jpg','images/roads/05.jpg','images/roads/06.jpg','images/roads/07.jpg'
     ],
     districts: [
-      { name: 'Nubra', coords: '35.42°N  77.52°E' },
-      { name: 'Nubra', coords: '35.42°N  77.52°E' },
+      { name: 'Nubra',       coords: '35.42°N  77.52°E' },
+      { name: 'Nubra',       coords: '35.42°N  77.52°E' },
       { name: 'Khardung La', coords: '34.27°N  77.61°E' },
       { name: 'Khardung La', coords: '34.27°N  77.61°E' },
-      { name: 'Leh', coords: '34.16°N  77.58°E' },
-      { name: 'Leh', coords: '34.16°N  77.58°E' },
-      { name: 'Leh', coords: '34.16°N  77.58°E' }
+      { name: 'Leh',         coords: '34.16°N  77.58°E' },
+      { name: 'Leh',         coords: '34.16°N  77.58°E' },
+      { name: 'Leh',         coords: '34.16°N  77.58°E' },
     ]
   },
   traces: {
@@ -91,37 +85,47 @@ const EXHIBS = {
     subtitle: 'The clear landscape of Ladakh appears empty, but never is.',
     opening: 'Seen from a lens of material traces, its relation to the social appears hidden in some corners, faded behind the dust,\nbut never absent.',
     images: [
-      'images/traces/00.jpg', 'images/traces/01.jpg', 'images/traces/02.jpg',
-      'images/traces/03.jpg', 'images/traces/04.jpg', 'images/traces/05.jpg'
+      'images/traces/00.jpg','images/traces/01.jpg','images/traces/02.jpg',
+      'images/traces/03.jpg','images/traces/04.jpg','images/traces/05.jpg'
     ],
     districts: [
-      { name: 'Nubra', coords: '35.42°N  77.52°E' },
-      { name: 'Rangdum', coords: '33.54°N  77.03°E' },
-      { name: 'Zanskar', coords: '33.78°N  77.55°E' },
-      { name: 'Zanskar', coords: '33.78°N  77.55°E' },
+      { name: 'Nubra',         coords: '35.42°N  77.52°E' },
+      { name: 'Rangdum',       coords: '33.54°N  77.03°E' },
+      { name: 'Zanskar',       coords: '33.78°N  77.55°E' },
+      { name: 'Zanskar',       coords: '33.78°N  77.55°E' },
       { name: 'Markha Valley', coords: '33.92°N  77.65°E' },
-      { name: 'Ladakh', coords: '34.16°N  77.58°E' }
+      { name: 'Ladakh',        coords: '34.16°N  77.58°E' },
     ]
   }
 };
 
-function Gallery() {
-  const [exhibKey, setExhibKey] = useState('roads');
-  const [idx, setIdx] = useState(0);
-  const [layers, setLayers] = useState([]);
-  const [busy, setBusy] = useState(false);
-  const [badgeVisible, setBadgeVisible] = useState(true);
-  const layerId = useRef(0);
+function useIsMobile() {
+  const [mobile, setMobile] = useState(window.innerWidth <= 680);
+  useEffect(() => {
+    const h = () => setMobile(window.innerWidth <= 680);
+    window.addEventListener('resize', h);
+    return () => window.removeEventListener('resize', h);
+  }, []);
+  return mobile;
+}
 
-  const exhib = EXHIBS[exhibKey];
-  const total = exhib.images.length;
+function Gallery() {
+  const isMobile = useIsMobile();
+  const [exhibKey, setExhibKey] = useState('roads');
+  const [idx, setIdx]           = useState(0);
+  const [layers, setLayers]     = useState([]);
+  const [busy, setBusy]         = useState(false);
+  const layerId = useRef(0);
+  const touchStartX = useRef(null);
+
+  const exhib    = EXHIBS[exhibKey];
+  const total    = exhib.images.length;
   const district = exhib.districts[idx];
 
   useEffect(() => {
     const id = ++layerId.current;
-    setLayers([{ id, src: exhib.images[0], cls: 'img-enter-exhib' }]);
+    setLayers([{ id, src: exhib.images[0], cls: 'img-active' }]);
     setIdx(0);
-    setBadgeVisible(true);
     setBusy(false);
   }, [exhibKey]);
 
@@ -129,27 +133,22 @@ function Gallery() {
     if (busy) return;
     const newIdx = (idx + n + total) % total;
     const id = ++layerId.current;
-    const cls = n > 0 ? 'img-enter-next' : 'img-enter-prev';
     setBusy(true);
-    setBadgeVisible(false);
-
-    setLayers((prev) => [
-      ...prev.map((l) => ({ ...l, cls: 'img-exit' })),
-      { id, src: exhib.images[newIdx], cls }
+    setLayers(prev => [
+      ...prev.map(l => ({ ...l, cls: 'img-exit' })),
+      { id, src: exhib.images[newIdx], cls: 'img-enter' }
     ]);
-
     setTimeout(() => {
       setIdx(newIdx);
       setLayers([{ id, src: exhib.images[newIdx], cls: 'img-active' }]);
       setBusy(false);
-      setTimeout(() => setBadgeVisible(true), 80);
-    }, 480);
+    }, 220);
   }, [busy, idx, total, exhib]);
 
   useEffect(() => {
     const h = (e) => {
       if (e.key === 'ArrowRight') go(1);
-      if (e.key === 'ArrowLeft') go(-1);
+      if (e.key === 'ArrowLeft')  go(-1);
     };
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
@@ -160,105 +159,172 @@ function Gallery() {
     else navigator.clipboard && navigator.clipboard.writeText(window.location.href);
   };
 
-  return (
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd   = (e) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 44) go(dx < 0 ? 1 : -1);
+    touchStartX.current = null;
+  };
+
+  /* ── Shared styles ── */
+  const navBtn = (active) => ({
+    fontFamily: 'IBM Plex Mono, monospace',
+    fontSize: isMobile ? 9 : 10,
+    letterSpacing: '0.12em',
+    textTransform: 'uppercase',
+    color: active ? '#f1e9d8' : '#8a7a6e',
+    padding: isMobile ? '6px 10px' : '6px 16px',
+    paddingBottom: 4,
+    borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
+    marginBottom: -1,
+    transition: 'color .18s, border-color .18s',
+    whiteSpace: 'nowrap',
+  });
+
+  const arrowBtn = {
+    width: 44, height: 44,
+    borderRadius: '50%',
+    border: '1px solid rgba(241,233,216,0.18)',
+    color: '#f1e9d8',
+    fontSize: 22,
+    fontFamily: 'Cormorant, serif',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    flexShrink: 0,
+  };
+
+  /* ── Desktop layout ── */
+  if (!isMobile) return (
     <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column', background: '#1c1814', overflow: 'hidden' }}>
 
+      {/* Nav */}
       <nav style={{ height: 50, flexShrink: 0, display: 'flex', alignItems: 'center', padding: '0 24px 0 32px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-
-        <a href="#" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e', marginRight: 20, flexShrink: 0 }}>
-          ← Portfolio
-        </a>
-
+        <a href="#" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e', marginRight: 20, flexShrink: 0 }}>← Portfolio</a>
         <div style={{ width: 1, height: 14, background: 'rgba(241,233,216,0.1)', marginRight: 20, flexShrink: 0 }}></div>
-
-        <button onClick={() => setExhibKey('roads')} style={{ fontFamily: 'Cormorant, serif', fontSize: 18, color: '#f1e9d8', opacity: 0.88, marginRight: 28, flexShrink: 0 }}>
-          Fieldwork Gallery
-        </button>
-
+        <button onClick={() => setExhibKey('roads')} style={{ fontFamily: 'Cormorant, serif', fontSize: 18, color: '#f1e9d8', opacity: 0.88, marginRight: 28, flexShrink: 0 }}>Fieldwork Gallery</button>
         <div style={{ width: 1, height: 14, background: 'rgba(241,233,216,0.1)', marginRight: 20, flexShrink: 0 }}></div>
-
         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           {Object.entries(EXHIBS).map(([key, ex]) => (
-            <button key={key} onClick={() => setExhibKey(key)} style={{
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 10,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: exhibKey === key ? '#f1e9d8' : '#8a7a6e',
-              padding: '6px 16px',
-              paddingBottom: 4,
-              borderBottom: exhibKey === key ? '2px solid var(--accent)' : '2px solid transparent',
-              marginBottom: -1,
-              transition: 'color .18s, border-color .18s'
-            }}>
-              {ex.title}
-            </button>
+            <button key={key} onClick={() => setExhibKey(key)} style={navBtn(exhibKey === key)}>{ex.title}</button>
           ))}
         </div>
-
         <div style={{ flex: 1 }}></div>
-
-        <button onClick={share} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e' }}>
-          Share
-        </button>
+        <button onClick={share} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e' }}>Share</button>
       </nav>
 
+      {/* Main */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
+        {/* Left panel */}
         <div style={{ width: 380, flexShrink: 0, display: 'flex', flexDirection: 'column', padding: '48px 48px 44px', background: '#1c1814' }}>
-
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div style={{ fontFamily: 'Noto Sans, sans-serif', fontSize: 44, fontWeight: 300, color: '#f1e9d8', lineHeight: 1.06, letterSpacing: '-0.01em', marginBottom: 24 }}>
               {exhib.title}
             </div>
-
             <div style={{ width: 30, height: 1, background: 'var(--accent)', marginBottom: 26 }}></div>
-
             <div style={{ fontFamily: 'Cormorant, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 18.5, color: 'rgba(241,233,216,0.68)', lineHeight: 1.82 }}>
               {exhib.subtitle}
-              {exhib.opening && (
-                <>
-                  <br /><br />
-                  {exhib.opening.split('\n').map((line, i, arr) => (
-                    <React.Fragment key={i}>
-                      {line}
-                      {i < arr.length - 1 && <br />}
-                    </React.Fragment>
-                  ))}
-                </>
-              )}
+              {exhib.opening && (<>
+                <br /><br />
+                {exhib.opening.split('\n').map((line, i, arr) => (
+                  <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
+                ))}
+              </>)}
             </div>
           </div>
-
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.1em', color: '#8a7a6e' }}>
-              <span style={{ color: '#f1e9d8' }}>{String(idx + 1).padStart(2, '0')}</span>
-              {' '}—{' '}
-              {String(total).padStart(2, '0')}
+              <span style={{ color: '#f1e9d8' }}>{String(idx + 1).padStart(2, '0')}</span>{' '}—{' '}{String(total).padStart(2, '0')}
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={() => go(-1)} style={{ width: 40, height: 40, borderRadius: '50%', border: '1px solid rgba(241,233,216,0.18)', color: '#f1e9d8', fontSize: 22, fontFamily: 'Cormorant, serif', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.35 : 1 }}>‹</button>
-              <button onClick={() => go(1)} style={{ width: 40, height: 40, borderRadius: '50%', border: '1px solid rgba(241,233,216,0.18)', color: '#f1e9d8', fontSize: 22, fontFamily: 'Cormorant, serif', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.35 : 1 }}>›</button>
+              <button onClick={() => go(-1)} style={{ ...arrowBtn, opacity: busy ? 0.35 : 1 }}>‹</button>
+              <button onClick={() => go(1)}  style={{ ...arrowBtn, opacity: busy ? 0.35 : 1 }}>›</button>
             </div>
           </div>
         </div>
 
-        <div style={{ flex: 1, background: '#1c1814', padding: '14px 14px 14px 0', overflow: 'hidden' }}>
+        {/* Image */}
+        <div style={{ flex: 1, background: '#1c1814', padding: '14px 14px 14px 0', overflow: 'hidden' }}
+          onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
           <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
-            {layers.map((layer) => (
-              <img key={layer.id} src={layer.src} alt="" className={layer.cls} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            {layers.map(layer => (
+              <img key={layer.id} src={layer.src} alt="" className={layer.cls}
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             ))}
-
             {district && (
-              <div style={{ position: 'absolute', bottom: 28, left: 28, padding: '10px 16px', background: 'rgba(20,16,12,0.60)', backdropFilter: 'blur(8px)', opacity: badgeVisible ? 1 : 0, transition: 'opacity .35s ease', pointerEvents: 'none' }}>
-                <div style={{ fontFamily: 'Cormorant, serif', fontSize: 16, color: 'var(--paper)', letterSpacing: '0.02em' }}>
-                  {district.name}
-                </div>
-                <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: 'rgba(241,233,216,0.52)', letterSpacing: '0.1em', marginTop: 3 }}>
-                  {district.coords}
-                </div>
+              <div style={{ position: 'absolute', bottom: 28, left: 28, padding: '10px 16px', background: 'rgba(20,16,12,0.60)', backdropFilter: 'blur(8px)', pointerEvents: 'none' }}>
+                <div style={{ fontFamily: 'Cormorant, serif', fontSize: 16, color: 'var(--paper)', letterSpacing: '0.02em' }}>{district.name}</div>
+                <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: 'rgba(241,233,216,0.52)', letterSpacing: '0.1em', marginTop: 3 }}>{district.coords}</div>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ── Mobile layout ── */
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#1c1814' }}>
+
+      {/* Mobile nav */}
+      <nav style={{ height: 48, flexShrink: 0, display: 'flex', alignItems: 'center', padding: '0 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', gap: 12 }}>
+        <a href="#" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>← Portfolio</a>
+        <button onClick={() => setExhibKey('roads')} style={{ fontFamily: 'Cormorant, serif', fontSize: 16, color: '#f1e9d8', opacity: 0.88, flex: 1, textAlign: 'center' }}>Fieldwork Gallery</button>
+        <button onClick={share} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>Share</button>
+      </nav>
+
+      {/* Exhibition tabs */}
+      <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.05)', flexShrink: 0 }}>
+        {Object.entries(EXHIBS).map(([key, ex]) => (
+          <button key={key} onClick={() => setExhibKey(key)} style={{ ...navBtn(exhibKey === key), flex: 1, textAlign: 'center', padding: '10px 8px 8px' }}>
+            {ex.title}
+          </button>
+        ))}
+      </div>
+
+      {/* Image — fills most of screen */}
+      <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', overflow: 'hidden', flexShrink: 0 }}
+        onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        {layers.map(layer => (
+          <img key={layer.id} src={layer.src} alt="" className={layer.cls}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        ))}
+        {/* Tap zones for navigation */}
+        <button onClick={() => go(-1)} style={{ position: 'absolute', left: 0, top: 0, width: '30%', height: '100%', background: 'transparent', zIndex: 2 }}></button>
+        <button onClick={() => go(1)}  style={{ position: 'absolute', right: 0, top: 0, width: '30%', height: '100%', background: 'transparent', zIndex: 2 }}></button>
+      </div>
+
+      {/* Info panel */}
+      <div style={{ padding: '28px 24px 40px', flex: 1 }}>
+        <div style={{ fontFamily: 'Noto Sans, sans-serif', fontSize: 30, fontWeight: 300, color: '#f1e9d8', lineHeight: 1.1, marginBottom: 16 }}>
+          {exhib.title}
+        </div>
+        <div style={{ width: 24, height: 1, background: 'var(--accent)', marginBottom: 18 }}></div>
+        <div style={{ fontFamily: 'Cormorant, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 17, color: 'rgba(241,233,216,0.68)', lineHeight: 1.75, marginBottom: 28 }}>
+          {exhib.subtitle}
+          {exhib.opening && (<>
+            <br /><br />
+            {exhib.opening.split('\n').map((line, i, arr) => (
+              <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
+            ))}
+          </>)}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            {district && (
+              <>
+                <div style={{ fontFamily: 'Cormorant, serif', fontSize: 15, color: '#f1e9d8' }}>{district.name}</div>
+                <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#8a7a6e', letterSpacing: '0.08em', marginTop: 3 }}>{district.coords}</div>
+              </>
+            )}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#8a7a6e' }}>
+              <span style={{ color: '#f1e9d8' }}>{String(idx + 1).padStart(2, '0')}</span>{' '}—{' '}{String(total).padStart(2, '0')}
+            </div>
+            <button onClick={() => go(-1)} style={{ ...arrowBtn, opacity: busy ? 0.35 : 1 }}>‹</button>
+            <button onClick={() => go(1)}  style={{ ...arrowBtn, opacity: busy ? 0.35 : 1 }}>›</button>
           </div>
         </div>
       </div>
