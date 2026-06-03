@@ -118,6 +118,7 @@ function Gallery() {
   const [busy, setBusy]         = useState(false);
   const layerId = useRef(0);
   const touchStartX = useRef(null);
+  const preloadRefs = useRef([]);
 
   const exhib    = EXHIBS[exhibKey];
   const total    = exhib.images.length;
@@ -132,11 +133,17 @@ function Gallery() {
     setBusy(false);
   }, [exhibKey]);
 
-  // Preload next image for smooth transitions
+  // Preload prev + next images — keep refs so browser doesn't GC the requests
   useEffect(() => {
-    const nextIdx = (idx + 1) % total;
-    const img = new Image();
-    img.src = exhib.images[nextIdx];
+    const toLoad = [
+      exhib.images[(idx + 1) % total],
+      exhib.images[(idx - 1 + total) % total],
+    ];
+    preloadRefs.current = toLoad.map(src => {
+      const img = new Image();
+      img.src = src;
+      return img;
+    });
   }, [idx, exhib, total]);
 
   const go = useCallback((n) => {
@@ -162,15 +169,13 @@ function Gallery() {
       }, 220);
     };
 
+    // Set onload BEFORE src so we never miss a fast-cache hit
     const img = new Image();
+    img.onload  = doTransition;
+    img.onerror = doTransition;        // never leave UI stuck
+    setTimeout(doTransition, 4000);    // safety fallback after 4s
     img.src = newSrc;
-    if (img.complete) {
-      doTransition();
-    } else {
-      img.onload  = doTransition;
-      img.onerror = doTransition;        // never leave UI stuck
-      setTimeout(doTransition, 4000);    // safety fallback after 4s
-    }
+    if (img.complete) doTransition();  // already cached — fires immediately
   }, [busy, idx, total, exhib]);
 
   useEffect(() => {
@@ -340,8 +345,11 @@ function Gallery() {
             <button onClick={() => go(1)}  style={{ ...arrowBtn, opacity: busy ? 0.35 : 1 }}>›</button>
           </div>
         </div>
+        <div style={{ marginTop: 5, fontFamily: 'Cormorant, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 14, color: 'rgba(241,233,216,0.52)', lineHeight: 1.55 }}>
+          {exhib.subtitle}
+        </div>
         {district && (
-          <div style={{ marginTop: 6, display: 'flex', alignItems: 'baseline', gap: 10 }}>
+          <div style={{ marginTop: 8, display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <span style={{ fontFamily: 'Cormorant, serif', fontSize: 13, color: 'rgba(241,233,216,0.55)' }}>{district.name}</span>
             <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, color: '#8a7a6e', letterSpacing: '0.08em' }}>{district.coords}</span>
           </div>
