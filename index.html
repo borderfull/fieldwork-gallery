@@ -70,14 +70,15 @@ const EXHIBS = {
       'images/roads/01.jpg','images/roads/02.jpg','images/roads/03.jpg',
       'images/roads/04.jpg','images/roads/05.jpg','images/roads/06.jpg','images/roads/07.jpg'
     ],
+    objectPositions: ['center', 'center', 'center', 'center', 'center', 'center', 'center'],
     districts: [
+      { name: 'Leh',         coords: '34.16°N  77.58°E' },
+      { name: 'Leh',         coords: '34.16°N  77.58°E' },
+      { name: 'Leh',         coords: '34.16°N  77.58°E' },
+      { name: 'Leh',         coords: '34.16°N  77.58°E' },
       { name: 'Nubra',       coords: '35.42°N  77.52°E' },
       { name: 'Nubra',       coords: '35.42°N  77.52°E' },
       { name: 'Khardung La', coords: '34.27°N  77.61°E' },
-      { name: 'Khardung La', coords: '34.27°N  77.61°E' },
-      { name: 'Leh',         coords: '34.16°N  77.58°E' },
-      { name: 'Leh',         coords: '34.16°N  77.58°E' },
-      { name: 'Leh',         coords: '34.16°N  77.58°E' },
     ]
   },
   traces: {
@@ -89,8 +90,8 @@ const EXHIBS = {
       'images/traces/03.jpg','images/traces/04.jpg','images/traces/05.jpg'
     ],
     districts: [
-      { name: 'Nubra',         coords: '35.42°N  77.52°E' },
       { name: 'Rangdum',       coords: '33.54°N  77.03°E' },
+      { name: 'Nubra',         coords: '35.42°N  77.52°E' },
       { name: 'Zanskar',       coords: '33.78°N  77.55°E' },
       { name: 'Zanskar',       coords: '33.78°N  77.55°E' },
       { name: 'Markha Valley', coords: '33.92°N  77.65°E' },
@@ -122,27 +123,54 @@ function Gallery() {
   const total    = exhib.images.length;
   const district = exhib.districts[idx];
 
+  const objPos = (i) => (exhib.objectPositions?.[i] || 'center');
+
   useEffect(() => {
     const id = ++layerId.current;
-    setLayers([{ id, src: exhib.images[0], cls: 'img-active' }]);
+    setLayers([{ id, src: exhib.images[0], cls: 'img-active', pos: objPos(0) }]);
     setIdx(0);
     setBusy(false);
   }, [exhibKey]);
 
+  // Preload next image for smooth transitions
+  useEffect(() => {
+    const nextIdx = (idx + 1) % total;
+    const img = new Image();
+    img.src = exhib.images[nextIdx];
+  }, [idx, exhib, total]);
+
   const go = useCallback((n) => {
     if (busy) return;
-    const newIdx = (idx + n + total) % total;
-    const id = ++layerId.current;
+    const newIdx  = (idx + n + total) % total;
+    const newSrc  = exhib.images[newIdx];
+    const newPos  = objPos(newIdx);
+    const id      = ++layerId.current;
     setBusy(true);
-    setLayers(prev => [
-      ...prev.map(l => ({ ...l, cls: 'img-exit' })),
-      { id, src: exhib.images[newIdx], cls: 'img-enter' }
-    ]);
-    setTimeout(() => {
-      setIdx(newIdx);
-      setLayers([{ id, src: exhib.images[newIdx], cls: 'img-active' }]);
-      setBusy(false);
-    }, 220);
+
+    let transitioned = false;
+    const doTransition = () => {
+      if (transitioned) return;
+      transitioned = true;
+      setLayers(prev => [
+        ...prev.map(l => ({ ...l, cls: 'img-exit' })),
+        { id, src: newSrc, cls: 'img-enter', pos: newPos }
+      ]);
+      setTimeout(() => {
+        setIdx(newIdx);
+        setLayers([{ id, src: newSrc, cls: 'img-active', pos: newPos }]);
+        setBusy(false);
+      }, 220);
+    };
+
+    const img = new Image();
+    img.src = newSrc;
+    if (img.complete) {
+      doTransition();
+    } else {
+      img.onload  = doTransition;
+      img.onerror = doTransition;        // never leave UI stuck
+      setTimeout(doTransition, 4000);    // safety fallback after 4s
+    }
   }, [busy, idx, total, exhib]);
 
   useEffect(() => {
@@ -198,18 +226,23 @@ function Gallery() {
     <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column', background: '#1c1814', overflow: 'hidden' }}>
 
       {/* Nav */}
-      <nav style={{ height: 50, flexShrink: 0, display: 'flex', alignItems: 'center', padding: '0 24px 0 32px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <a href="#" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e', marginRight: 20, flexShrink: 0 }}>← Portfolio</a>
-        <div style={{ width: 1, height: 14, background: 'rgba(241,233,216,0.1)', marginRight: 20, flexShrink: 0 }}></div>
-        <button onClick={() => setExhibKey('roads')} style={{ fontFamily: 'Cormorant, serif', fontSize: 18, color: '#f1e9d8', opacity: 0.88, marginRight: 28, flexShrink: 0 }}>Fieldwork Gallery</button>
-        <div style={{ width: 1, height: 14, background: 'rgba(241,233,216,0.1)', marginRight: 20, flexShrink: 0 }}></div>
-        <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+      <nav style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+
+        {/* Row 1 — identity */}
+        <div style={{ height: 48, position: 'relative', display: 'flex', alignItems: 'center', padding: '0 24px 0 32px' }}>
+          <a href="#" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>← Portfolio</a>
+          <button onClick={() => setExhibKey('roads')} style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Cormorant, serif', fontSize: 18, color: '#f1e9d8', opacity: 0.88, whiteSpace: 'nowrap' }}>Fieldwork Gallery</button>
+          <div style={{ flex: 1 }}></div>
+          <button onClick={share} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e' }}>Share</button>
+        </div>
+
+        {/* Row 2 — exhibitions */}
+        <div style={{ height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
           {Object.entries(EXHIBS).map(([key, ex]) => (
             <button key={key} onClick={() => setExhibKey(key)} style={navBtn(exhibKey === key)}>{ex.title}</button>
           ))}
         </div>
-        <div style={{ flex: 1 }}></div>
-        <button onClick={share} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e' }}>Share</button>
+
       </nav>
 
       {/* Main */}
@@ -248,8 +281,8 @@ function Gallery() {
           onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
           <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
             {layers.map(layer => (
-              <img key={layer.id} src={layer.src} alt="" className={layer.cls}
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <img key={layer.id} src={layer.src} alt="" className={layer.cls} loading="lazy" decoding="async"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: layer.pos || 'center', display: 'block' }} />
             ))}
             {district && (
               <div style={{ position: 'absolute', bottom: 28, left: 28, padding: '10px 16px', background: 'rgba(20,16,12,0.60)', backdropFilter: 'blur(8px)', pointerEvents: 'none' }}>
@@ -265,61 +298,41 @@ function Gallery() {
 
   /* ── Mobile layout ── */
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#1c1814' }}>
+    <div style={{ width: '100vw', height: '100dvh', display: 'flex', flexDirection: 'column', background: '#1c1814', overflow: 'hidden' }}>
 
-      {/* Mobile nav */}
+      {/* Nav row 1 — identity */}
       <nav style={{ height: 48, flexShrink: 0, display: 'flex', alignItems: 'center', padding: '0 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', gap: 12 }}>
         <a href="#" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>← Portfolio</a>
-        <button onClick={() => setExhibKey('roads')} style={{ fontFamily: 'Cormorant, serif', fontSize: 16, color: '#f1e9d8', opacity: 0.88, flex: 1, textAlign: 'center' }}>Fieldwork Gallery</button>
+        <div style={{ flex: 1, textAlign: 'center', fontFamily: 'Cormorant, serif', fontSize: 16, color: '#f1e9d8', opacity: 0.88 }}>Fieldwork Gallery</div>
         <button onClick={share} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>Share</button>
       </nav>
 
-      {/* Exhibition tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.05)', flexShrink: 0 }}>
+      {/* Nav row 2 — exhibitions */}
+      <div style={{ height: 36, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', gap: 4 }}>
         {Object.entries(EXHIBS).map(([key, ex]) => (
-          <button key={key} onClick={() => setExhibKey(key)} style={{ ...navBtn(exhibKey === key), flex: 1, textAlign: 'center', padding: '10px 8px 8px' }}>
-            {ex.title}
-          </button>
+          <button key={key} onClick={() => setExhibKey(key)} style={navBtn(exhibKey === key)}>{ex.title}</button>
         ))}
       </div>
 
-      {/* Image — fills most of screen */}
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', overflow: 'hidden', flexShrink: 0 }}
+      {/* Image — fills all remaining space */}
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}
         onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {layers.map(layer => (
-          <img key={layer.id} src={layer.src} alt="" className={layer.cls}
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <img key={layer.id} src={layer.src} alt="" className={layer.cls} loading="lazy" decoding="async"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: layer.pos || 'center', display: 'block' }} />
         ))}
-        {/* Tap zones for navigation */}
-        <button onClick={() => go(-1)} style={{ position: 'absolute', left: 0, top: 0, width: '30%', height: '100%', background: 'transparent', zIndex: 2 }}></button>
-        <button onClick={() => go(1)}  style={{ position: 'absolute', right: 0, top: 0, width: '30%', height: '100%', background: 'transparent', zIndex: 2 }}></button>
+        {/* Visible nav arrows overlaid on image */}
+        <button onClick={() => go(-1)} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', ...arrowBtn, opacity: busy ? 0.2 : 0.72, zIndex: 2, background: 'rgba(20,16,12,0.35)', backdropFilter: 'blur(4px)' }}>‹</button>
+        <button onClick={() => go(1)}  style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', ...arrowBtn, opacity: busy ? 0.2 : 0.72, zIndex: 2, background: 'rgba(20,16,12,0.35)', backdropFilter: 'blur(4px)' }}>›</button>
       </div>
 
-      {/* Info panel */}
-      <div style={{ padding: '28px 24px 40px', flex: 1 }}>
-        <div style={{ fontFamily: 'Noto Sans, sans-serif', fontSize: 30, fontWeight: 300, color: '#f1e9d8', lineHeight: 1.1, marginBottom: 16 }}>
-          {exhib.title}
-        </div>
-        <div style={{ width: 24, height: 1, background: 'var(--accent)', marginBottom: 18 }}></div>
-        <div style={{ fontFamily: 'Cormorant, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 17, color: 'rgba(241,233,216,0.68)', lineHeight: 1.75, marginBottom: 28 }}>
-          {exhib.subtitle}
-          {exhib.opening && (<>
-            <br /><br />
-            {exhib.opening.split('\n').map((line, i, arr) => (
-              <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
-            ))}
-          </>)}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            {district && (
-              <>
-                <div style={{ fontFamily: 'Cormorant, serif', fontSize: 15, color: '#f1e9d8' }}>{district.name}</div>
-                <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#8a7a6e', letterSpacing: '0.08em', marginTop: 3 }}>{district.coords}</div>
-              </>
-            )}
+      {/* Bottom strip — title, district, counter + arrows */}
+      <div style={{ flexShrink: 0, padding: '12px 20px 20px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <div style={{ fontFamily: 'Noto Sans, sans-serif', fontSize: 20, fontWeight: 300, color: '#f1e9d8', lineHeight: 1.1 }}>
+            {exhib.title}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
             <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#8a7a6e' }}>
               <span style={{ color: '#f1e9d8' }}>{String(idx + 1).padStart(2, '0')}</span>{' '}—{' '}{String(total).padStart(2, '0')}
             </div>
@@ -327,6 +340,12 @@ function Gallery() {
             <button onClick={() => go(1)}  style={{ ...arrowBtn, opacity: busy ? 0.35 : 1 }}>›</button>
           </div>
         </div>
+        {district && (
+          <div style={{ marginTop: 6, display: 'flex', alignItems: 'baseline', gap: 10 }}>
+            <span style={{ fontFamily: 'Cormorant, serif', fontSize: 13, color: 'rgba(241,233,216,0.55)' }}>{district.name}</span>
+            <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, color: '#8a7a6e', letterSpacing: '0.08em' }}>{district.coords}</span>
+          </div>
+        )}
       </div>
     </div>
   );
