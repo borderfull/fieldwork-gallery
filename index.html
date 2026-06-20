@@ -54,6 +54,15 @@
     #root { height: auto; min-height: 100%; }
   }
 </style>
+<template id="__bundler_thumbnail" data-bg-color="#1c1814">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" fill="#1c1814"/>
+    <rect x="10" y="10" width="30" height="80" fill="#f1e9d8" opacity="0.3"/>
+    <rect x="55" y="15" width="35" height="70" fill="#f1e9d8"/>
+    <circle cx="72" cy="35" r="4" fill="#c4603a"/>
+    <line x1="10" y1="92" x2="90" y2="92" stroke="#c4603a" stroke-width="1.5"/>
+  </svg>
+</template>
 </head>
 <body>
 <div id="root"></div>
@@ -65,7 +74,7 @@ const EXHIBS = {
   roads: {
     title: 'Roads of Ladakh',
     subtitle: 'Roads in Ladakh are simultaneously less and more than what they stand for.',
-    opening: 'They are material, they are social, they are noisy, they are symbolic, and they are moral.',
+    opening: 'They are material, they are social, they are ambient, they are symbolic, and they are moral.',
     images: [
       'images/roads/01.jpg','images/roads/02.jpg','images/roads/03.jpg',
       'images/roads/04.jpg','images/roads/05.jpg','images/roads/06.jpg','images/roads/07.jpg'
@@ -235,7 +244,7 @@ function Gallery() {
 
         {/* Row 1 — identity */}
         <div style={{ height: 48, position: 'relative', display: 'flex', alignItems: 'center', padding: '0 24px 0 32px' }}>
-          <a href="#" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>← Portfolio</a>
+          <a href="#" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0, fontStyle: 'italic' }}>← Prince Tomar</a>
           <button onClick={() => setExhibKey('roads')} style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Cormorant, serif', fontSize: 18, color: '#f1e9d8', opacity: 0.88, whiteSpace: 'nowrap' }}>Fieldwork Gallery</button>
           <div style={{ flex: 1 }}></div>
           <button onClick={share} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e' }}>Share</button>
@@ -307,7 +316,7 @@ function Gallery() {
 
       {/* Nav row 1 — identity */}
       <nav style={{ height: 48, flexShrink: 0, display: 'flex', alignItems: 'center', padding: '0 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', gap: 12 }}>
-        <a href="#" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>← Portfolio</a>
+        <a href="#" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0, fontStyle: 'italic' }}>← Prince Tomar</a>
         <div style={{ flex: 1, textAlign: 'center', fontFamily: 'Cormorant, serif', fontSize: 16, color: '#f1e9d8', opacity: 0.88 }}>Fieldwork Gallery</div>
         <button onClick={share} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>Share</button>
       </nav>
