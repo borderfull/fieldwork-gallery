@@ -214,8 +214,9 @@
     .district-tag { display: none !important; }
     .mobile-strip {
       display: block; flex-shrink: 0;
-      padding: 12px 20px 20px;
+      padding: 12px 20px 16px;
       border-top: 1px solid rgba(255,255,255,0.05);
+      overflow-y: auto;
     }
   }
 
@@ -234,6 +235,12 @@
     font-family: 'Cormorant', serif; font-style: italic;
     font-weight: 300; font-size: 14px;
     color: rgba(241,233,216,0.52); line-height: 1.55;
+  }
+  .mobile-opening {
+    margin-top: 4px;
+    font-family: 'Cormorant', serif; font-style: italic;
+    font-weight: 300; font-size: 14px;
+    color: rgba(241,233,216,0.38); line-height: 1.55;
   }
   .mobile-district {
     margin-top: 8px; display: flex; align-items: baseline; gap: 10px;
@@ -294,7 +301,7 @@
     <div class="viewer" id="js-viewer">
       <div class="image-stack" id="js-stack">
         <!-- First image in HTML for fast LCP discovery; JS manages subsequent navigation -->
-        <img src="images/roads/01.jpg" alt="Roads of Ladakh, image 1 of 7" class="img-active" loading="eager" fetchpriority="high" decoding="async" />
+        <img src="images/roads/01.jpg" alt="Roads of Ladakh, image 1 of 7" class="img-active" loading="eager" fetchpriority="high" decoding="async" sizes="(max-width: 680px) 100vw, calc(100vw - 380px)" />
         <div class="district-tag" id="js-district">
           <div class="district-name" id="js-dist-name">Leh</div>
           <div class="district-coords" id="js-dist-coords">34.16°N  77.58°E</div>
@@ -305,7 +312,7 @@
     </div>
   </main>
 
-  <div class="mobile-strip" aria-hidden="true">
+  <div class="mobile-strip">
     <div class="mobile-strip-top">
       <div class="mobile-title" id="js-mob-title">Roads of Ladakh</div>
       <div class="mobile-controls">
@@ -317,6 +324,7 @@
       </div>
     </div>
     <p class="mobile-desc" id="js-mob-desc">Roads in Ladakh are simultaneously less and more than what they stand for.</p>
+    <p class="mobile-opening" id="js-mob-opening">They are material, they are social, they are ambient, they are symbolic, and they are moral.</p>
     <div class="mobile-district" id="js-mob-district">
       <span class="mobile-district-name" id="js-mob-dist-name">Leh</span>
       <span class="mobile-district-coords" id="js-mob-dist-coords">34.16°N  77.58°E</span>
@@ -384,6 +392,7 @@
   var exhibDescEl   = document.getElementById('js-exhib-desc');
   var mobTitleEl    = document.getElementById('js-mob-title');
   var mobDescEl     = document.getElementById('js-mob-desc');
+  var mobOpeningEl  = document.getElementById('js-mob-opening');
   var mobDist       = document.getElementById('js-mob-district');
   var mobDistName   = document.getElementById('js-mob-dist-name');
   var mobDistCoords = document.getElementById('js-mob-dist-coords');
@@ -437,7 +446,8 @@
 
     // Mobile strip
     mobTitleEl.textContent = e.title;
-    mobDescEl.textContent  = e.subtitle;
+    mobDescEl.textContent    = e.subtitle;
+    mobOpeningEl.textContent = e.opening || '';
     if (dist) {
       mobDistName.textContent   = dist.name;
       mobDistCoords.textContent = dist.coords;
