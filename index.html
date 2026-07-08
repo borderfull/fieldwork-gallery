@@ -16,7 +16,11 @@
 <meta name="twitter:title" content="Fieldwork Gallery — Prince Tomar" />
 <meta name="twitter:description" content="Thematic photographic explorations of Ladakh." />
 <meta name="twitter:image" content="assets/roads-preview.jpg" />
-<!-- Google Analytics -->
+
+<!-- Preload LCP image immediately -->
+<link rel="preload" as="image" href="images/roads/01.jpg" fetchpriority="high" />
+
+<!-- Google Analytics (async — non-blocking) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-G3LPX71J7E"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -24,44 +28,226 @@
   gtag('js', new Date());
   gtag('config', 'G-G3LPX71J7E', { anonymize_ip: true });
 </script>
+
+<!-- Fonts: async load — non-render-blocking -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&family=Noto+Sans:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&family=Noto+Sans:ital,wght@0,300;0,400;1,300;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&family=Noto+Sans:ital,wght@0,300;0,400;1,300;1,400&display=swap" /></noscript>
+
+<!-- Preconnect to Analytics for faster beacon -->
+<link rel="preconnect" href="https://www.google-analytics.com" />
+
 <style>
+  /* ── Tokens ── */
   :root {
     --paper:    #f1e9d8;
     --ink:      #1c1814;
-    --ink-mute: #8a7a6e;
+    --ink-mute: #9a8a7d; /* lightened from #8a7a6e for WCAG AA contrast */
     --accent:   #c4603a;
   }
+
+  /* ── Reset ── */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body, #root { width: 100%; height: 100%; background: #1c1814; }
-  body { overflow: hidden; }
+  html, body { width: 100%; height: 100%; background: var(--ink); overflow: hidden; }
   button { border: none; background: transparent; cursor: pointer; font-family: inherit; }
   a { text-decoration: none; color: inherit; }
 
-  /* ── Faster transitions ── */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+  /* ── Layout ── */
+  .site-layout {
+    width: 100vw; height: 100vh;
+    display: flex; flex-direction: column;
+    background: var(--ink); overflow: hidden;
   }
-  @keyframes fadeOut {
-    from { opacity: 1; }
-    to   { opacity: 0; }
+
+  /* ── Nav ── */
+  .site-nav {
+    flex-shrink: 0; display: flex; flex-direction: column;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
   }
+  .nav-identity {
+    height: 48px; position: relative;
+    display: flex; align-items: center;
+    padding: 0 24px 0 32px;
+  }
+  .portfolio-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-mute); flex-shrink: 0;
+  }
+  .portfolio-link em { font-style: italic; }
+  .site-title-btn {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    font-family: 'Cormorant', serif; font-size: 18px;
+    color: var(--paper); opacity: 0.88; white-space: nowrap;
+  }
+  .share-btn {
+    margin-left: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .nav-exhibitions {
+    height: 38px; display: flex; align-items: center;
+    justify-content: center; gap: 4px;
+  }
+  .nav-exhib {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-mute);
+    padding: 6px 16px 4px;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .18s, border-color .18s;
+    white-space: nowrap;
+  }
+  .nav-exhib.active { color: var(--paper); border-bottom-color: var(--accent); }
+
+  /* ── Main ── */
+  .gallery-main { flex: 1; display: flex; overflow: hidden; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 380px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    padding: 48px 48px 44px;
+  }
+  .sidebar-content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .exhib-title {
+    font-family: 'Noto Sans', sans-serif; font-size: 44px; font-weight: 300;
+    color: var(--paper); line-height: 1.06; letter-spacing: -0.01em; margin-bottom: 24px;
+  }
+  .exhib-rule { width: 30px; height: 1px; background: var(--accent); margin-bottom: 26px; }
+  .exhib-desc {
+    font-family: 'Cormorant', serif; font-style: italic;
+    font-weight: 300; font-size: 18.5px;
+    color: rgba(241,233,216,0.68); line-height: 1.82;
+  }
+  .counter-row { display: flex; align-items: center; justify-content: space-between; }
+  .counter {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em; color: var(--ink-mute);
+  }
+  .counter-idx { color: var(--paper); }
+  .arrow-group { display: flex; gap: 10px; }
+
+  /* ── Arrow buttons ── */
+  .arrow-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid rgba(241,233,216,0.18);
+    color: var(--paper); font-size: 22px;
+    font-family: 'Cormorant', serif;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: opacity .18s;
+  }
+  .arrow-btn.busy { opacity: 0.35; pointer-events: none; }
+
+  /* ── Viewer ── */
+  .viewer {
+    flex: 1; background: var(--ink);
+    padding: 14px 14px 14px 0; overflow: hidden;
+    position: relative;
+  }
+  .image-stack {
+    position: relative; width: 100%; height: 100%; overflow: hidden;
+  }
+  .image-stack img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+
+  /* ── District tag ── */
+  .district-tag {
+    position: absolute; bottom: 28px; left: 28px;
+    padding: 10px 16px;
+    background: rgba(20,16,12,0.60);
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+  }
+  .district-tag.hidden { display: none; }
+  .district-name {
+    font-family: 'Cormorant', serif; font-size: 16px;
+    color: var(--paper); letter-spacing: 0.02em;
+  }
+  .district-coords {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    color: rgba(241,233,216,0.52); letter-spacing: 0.1em; margin-top: 3px;
+  }
+
+  /* ── Transitions ── */
+  @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
   .img-enter { animation: fadeIn  240ms ease forwards; }
   .img-exit  { animation: fadeOut 180ms ease forwards; }
   .img-active { opacity: 1; }
 
-  /* ── Mobile layout ── */
+  /* ── Mobile overlay arrows (hidden on desktop) ── */
+  .mobile-arrow {
+    display: none;
+    position: absolute; top: 50%; transform: translateY(-50%);
+    opacity: 0.72; z-index: 2;
+    background: rgba(20,16,12,0.35);
+    backdrop-filter: blur(4px);
+  }
+  .mobile-arrow.arrow-prev { left: 14px; }
+  .mobile-arrow.arrow-next { right: 14px; }
+  .mobile-arrow.busy { opacity: 0.2; pointer-events: none; }
+
+  /* ── Mobile strip (hidden on desktop) ── */
+  .mobile-strip { display: none; }
+  .mobile-district.hidden { display: none; }
+
+  /* ── Mobile ── */
   @media (max-width: 680px) {
-    body { overflow: auto; }
-    #root { height: auto; min-height: 100%; }
+    .site-layout { height: 100dvh; }
+    .nav-identity { padding: 0 16px; }
+    .portfolio-link { font-size: 9px; }
+    .site-title-btn { font-size: 16px; }
+    .share-btn { font-size: 9px; }
+    .nav-exhib { font-size: 9px; padding: 6px 10px 4px; }
+    .nav-exhibitions { height: 36px; }
+    .sidebar { display: none; }
+    .mobile-arrow { display: flex; }
+    .viewer { padding: 0; }
+    .image-stack img { object-fit: contain; }
+    .district-tag { display: none !important; }
+    .mobile-strip {
+      display: block; flex-shrink: 0;
+      padding: 12px 20px 20px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+  }
+
+  /* ── Mobile strip internals ── */
+  .mobile-strip-top {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 12px;
+  }
+  .mobile-title {
+    font-family: 'Noto Sans', sans-serif; font-size: 20px;
+    font-weight: 300; color: var(--paper); line-height: 1.1;
+  }
+  .mobile-controls { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .mobile-desc {
+    margin-top: 5px;
+    font-family: 'Cormorant', serif; font-style: italic;
+    font-weight: 300; font-size: 14px;
+    color: rgba(241,233,216,0.52); line-height: 1.55;
+  }
+  .mobile-district {
+    margin-top: 8px; display: flex; align-items: baseline; gap: 10px;
+  }
+  .mobile-district-name {
+    font-family: 'Cormorant', serif; font-size: 13px;
+    color: rgba(241,233,216,0.55);
+  }
+  .mobile-district-coords {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+    color: var(--ink-mute); letter-spacing: 0.08em;
   }
 </style>
+
 <template id="__bundler_thumbnail" data-bg-color="#1c1814">
   <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <rect width="100" height="100" fill="#1c1814"/>
@@ -73,310 +259,310 @@
 </template>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
+<div class="site-layout">
 
-const { useState, useEffect, useRef, useCallback } = React;
+  <nav class="site-nav" aria-label="Site navigation">
+    <div class="nav-identity">
+      <a href="https://www.princetomar.com" target="_blank" rel="noopener noreferrer" class="portfolio-link">← Prince <em>Tomar</em></a>
+      <button class="site-title-btn" id="js-site-title">Fieldwork Gallery</button>
+      <button class="share-btn" id="js-share">Share</button>
+    </div>
+    <div class="nav-exhibitions">
+      <button class="nav-exhib active" data-exhib="roads">Roads of Ladakh</button>
+      <button class="nav-exhib" data-exhib="traces">Traces</button>
+    </div>
+  </nav>
 
-const EXHIBS = {
-  roads: {
-    title: 'Roads of Ladakh',
-    subtitle: 'Roads in Ladakh are simultaneously less and more than what they stand for.',
-    opening: 'They are material, they are social, they are ambient, they are symbolic, and they are moral.',
-    images: [
-      'images/roads/01.jpg','images/roads/02.jpg','images/roads/03.jpg',
-      'images/roads/04.jpg','images/roads/05.jpg','images/roads/06.jpg','images/roads/07.jpg'
-    ],
-    objectPositions: ['center', 'center', 'center', 'center', 'center', 'center', 'center'],
-    districts: [
-      { name: 'Leh',         coords: '34.16°N  77.58°E' },
-      { name: 'Leh',         coords: '34.16°N  77.58°E' },
-      { name: 'Leh',         coords: '34.16°N  77.58°E' },
-      { name: 'Leh',         coords: '34.16°N  77.58°E' },
-      { name: 'Nubra',       coords: '35.42°N  77.52°E' },
-      { name: 'Nubra',       coords: '35.42°N  77.52°E' },
-      { name: 'Khardung La', coords: '34.27°N  77.61°E' },
-    ]
-  },
-  traces: {
-    title: 'Traces',
-    subtitle: 'The clear landscape of Ladakh appears empty, but never is.',
-    opening: 'Seen from a lens of material traces, its relation to the social appears hidden in some corners, faded behind the dust,\nbut never absent.',
-    images: [
-      'images/traces/00.jpg','images/traces/01.jpg','images/traces/02.jpg',
-      'images/traces/03.jpg','images/traces/04.jpg','images/traces/05.jpg'
-    ],
-    districts: [
-      { name: 'Rangdum',       coords: '33.54°N  77.03°E' },
-      { name: 'Nubra',         coords: '35.42°N  77.52°E' },
-      { name: 'Zanskar',       coords: '33.78°N  77.55°E' },
-      { name: 'Zanskar',       coords: '33.78°N  77.55°E' },
-      { name: 'Markha Valley', coords: '33.92°N  77.65°E' },
-      { name: 'Ladakh',        coords: '34.16°N  77.58°E' },
-    ]
-  }
-};
+  <main class="gallery-main">
+    <aside class="sidebar" aria-label="Exhibition info">
+      <div class="sidebar-content">
+        <h1 class="exhib-title" id="js-exhib-title">Roads of Ladakh</h1>
+        <div class="exhib-rule" aria-hidden="true"></div>
+        <p class="exhib-desc" id="js-exhib-desc">Roads in Ladakh are simultaneously less and more than what they stand for.<br /><br />They are material, they are social, they are ambient, they are symbolic, and they are moral.</p>
+      </div>
+      <div class="counter-row">
+        <div class="counter" aria-live="polite" aria-atomic="true">
+          <span class="counter-idx">01</span> — <span class="counter-total">07</span>
+        </div>
+        <div class="arrow-group">
+          <button class="arrow-btn" id="js-desk-prev" aria-label="Previous image">‹</button>
+          <button class="arrow-btn" id="js-desk-next" aria-label="Next image">›</button>
+        </div>
+      </div>
+    </aside>
 
-function useIsMobile() {
-  const [mobile, setMobile] = useState(window.innerWidth <= 680);
-  useEffect(() => {
-    const h = () => setMobile(window.innerWidth <= 680);
-    window.addEventListener('resize', h);
-    return () => window.removeEventListener('resize', h);
-  }, []);
-  return mobile;
-}
+    <div class="viewer" id="js-viewer">
+      <div class="image-stack" id="js-stack">
+        <!-- First image in HTML for fast LCP discovery; JS manages subsequent navigation -->
+        <img src="images/roads/01.jpg" alt="Roads of Ladakh, image 1 of 7" class="img-active" loading="eager" fetchpriority="high" decoding="async" />
+        <div class="district-tag" id="js-district">
+          <div class="district-name" id="js-dist-name">Leh</div>
+          <div class="district-coords" id="js-dist-coords">34.16°N  77.58°E</div>
+        </div>
+      </div>
+      <button class="arrow-btn mobile-arrow arrow-prev" id="js-mob-overlay-prev" aria-label="Previous image">‹</button>
+      <button class="arrow-btn mobile-arrow arrow-next" id="js-mob-overlay-next" aria-label="Next image">›</button>
+    </div>
+  </main>
 
-function Gallery() {
-  const isMobile = useIsMobile();
-  const [exhibKey, setExhibKey] = useState('roads');
-  const [idx, setIdx]           = useState(0);
-  const [layers, setLayers]     = useState([]);
-  const [busy, setBusy]         = useState(false);
-  const layerId = useRef(0);
-  const touchStartX = useRef(null);
-  const preloadRefs = useRef([]);
+  <div class="mobile-strip" aria-hidden="true">
+    <div class="mobile-strip-top">
+      <div class="mobile-title" id="js-mob-title">Roads of Ladakh</div>
+      <div class="mobile-controls">
+        <div class="counter">
+          <span class="counter-idx">01</span> — <span class="counter-total">07</span>
+        </div>
+        <button class="arrow-btn" id="js-mob-prev" aria-label="Previous image">‹</button>
+        <button class="arrow-btn" id="js-mob-next" aria-label="Next image">›</button>
+      </div>
+    </div>
+    <p class="mobile-desc" id="js-mob-desc">Roads in Ladakh are simultaneously less and more than what they stand for.</p>
+    <div class="mobile-district" id="js-mob-district">
+      <span class="mobile-district-name" id="js-mob-dist-name">Leh</span>
+      <span class="mobile-district-coords" id="js-mob-dist-coords">34.16°N  77.58°E</span>
+    </div>
+  </div>
 
-  const exhib    = EXHIBS[exhibKey];
-  const total    = exhib.images.length;
-  const district = exhib.districts[idx];
+</div>
+<script>
+(function () {
+  'use strict';
 
-  const objPos = (i) => (exhib.objectPositions?.[i] || 'center');
+  var EXHIBS = {
+    roads: {
+      title: 'Roads of Ladakh',
+      subtitle: 'Roads in Ladakh are simultaneously less and more than what they stand for.',
+      opening: 'They are material, they are social, they are ambient, they are symbolic, and they are moral.',
+      images: [
+        'images/roads/01.jpg','images/roads/02.jpg','images/roads/03.jpg',
+        'images/roads/04.jpg','images/roads/05.jpg','images/roads/06.jpg','images/roads/07.jpg'
+      ],
+      objectPositions: ['center','center','center','center','center','center','center'],
+      districts: [
+        { name: 'Leh',         coords: '34.16°N  77.58°E' },
+        { name: 'Leh',         coords: '34.16°N  77.58°E' },
+        { name: 'Leh',         coords: '34.16°N  77.58°E' },
+        { name: 'Leh',         coords: '34.16°N  77.58°E' },
+        { name: 'Nubra',       coords: '35.42°N  77.52°E' },
+        { name: 'Nubra',       coords: '35.42°N  77.52°E' },
+        { name: 'Khardung La', coords: '34.27°N  77.61°E' }
+      ]
+    },
+    traces: {
+      title: 'Traces',
+      subtitle: 'The clear landscape of Ladakh appears empty, but never is.',
+      opening: 'Seen from a lens of material traces, its relation to the social appears hidden in some corners, faded behind the dust,\nbut never absent.',
+      images: [
+        'images/traces/00.jpg','images/traces/01.jpg','images/traces/02.jpg',
+        'images/traces/03.jpg','images/traces/04.jpg','images/traces/05.jpg'
+      ],
+      districts: [
+        { name: 'Rangdum',       coords: '33.54°N  77.03°E' },
+        { name: 'Nubra',         coords: '35.42°N  77.52°E' },
+        { name: 'Zanskar',       coords: '33.78°N  77.55°E' },
+        { name: 'Zanskar',       coords: '33.78°N  77.55°E' },
+        { name: 'Markha Valley', coords: '33.92°N  77.65°E' },
+        { name: 'Ladakh',        coords: '34.16°N  77.58°E' }
+      ]
+    }
+  };
 
-  useEffect(() => {
-    const id = ++layerId.current;
-    setLayers([{ id, src: exhib.images[0], cls: 'img-active', pos: objPos(0) }]);
-    setIdx(0);
-    setBusy(false);
-  }, [exhibKey]);
+  // ── State ──
+  var exhibKey = 'roads';
+  var idx = 0;
+  var busy = false;
+  var layerId = 0;
+  var preloadImgs = [];
+  var touchStartX = null;
 
-  // Preload prev + next images — keep refs so browser doesn't GC the requests
-  useEffect(() => {
-    const toLoad = [
-      exhib.images[(idx + 1) % total],
-      exhib.images[(idx - 1 + total) % total],
-    ];
-    preloadRefs.current = toLoad.map(src => {
-      const img = new Image();
-      img.src = src;
-      return img;
+  // ── DOM refs ──
+  var stack         = document.getElementById('js-stack');
+  var districtTag   = document.getElementById('js-district');
+  var distNameEl    = document.getElementById('js-dist-name');
+  var distCoordsEl  = document.getElementById('js-dist-coords');
+  var exhibTitleEl  = document.getElementById('js-exhib-title');
+  var exhibDescEl   = document.getElementById('js-exhib-desc');
+  var mobTitleEl    = document.getElementById('js-mob-title');
+  var mobDescEl     = document.getElementById('js-mob-desc');
+  var mobDist       = document.getElementById('js-mob-district');
+  var mobDistName   = document.getElementById('js-mob-dist-name');
+  var mobDistCoords = document.getElementById('js-mob-dist-coords');
+  var navBtns       = document.querySelectorAll('.nav-exhib');
+  var counterIdxEls   = document.querySelectorAll('.counter-idx');
+  var counterTotalEls = document.querySelectorAll('.counter-total');
+  var allArrows       = document.querySelectorAll('.arrow-btn');
+
+  function ex()    { return EXHIBS[exhibKey]; }
+  function total() { return ex().images.length; }
+  function objPos(i) { return (ex().objectPositions && ex().objectPositions[i]) || 'center'; }
+
+  function updateMeta() {
+    var e = ex();
+    var dist = e.districts[idx];
+    var idxStr   = String(idx + 1).padStart(2, '0');
+    var totalStr = String(total()).padStart(2, '0');
+
+    // Desktop sidebar title
+    exhibTitleEl.textContent = e.title;
+
+    // Description: subtitle + opening (no innerHTML)
+    while (exhibDescEl.firstChild) exhibDescEl.removeChild(exhibDescEl.firstChild);
+    exhibDescEl.appendChild(document.createTextNode(e.subtitle));
+    if (e.opening) {
+      exhibDescEl.appendChild(document.createElement('br'));
+      exhibDescEl.appendChild(document.createElement('br'));
+      e.opening.split('\n').forEach(function (line, i, arr) {
+        exhibDescEl.appendChild(document.createTextNode(line));
+        if (i < arr.length - 1) exhibDescEl.appendChild(document.createElement('br'));
+      });
+    }
+
+    // Counters
+    counterIdxEls.forEach(function (el) { el.textContent = idxStr; });
+    counterTotalEls.forEach(function (el) { el.textContent = totalStr; });
+
+    // District (desktop overlay)
+    if (dist) {
+      distNameEl.textContent   = dist.name;
+      distCoordsEl.textContent = dist.coords;
+      districtTag.classList.remove('hidden');
+    } else {
+      districtTag.classList.add('hidden');
+    }
+
+    // Nav active
+    navBtns.forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.exhib === exhibKey);
     });
-  }, [idx, exhib, total]);
 
-  const go = useCallback((n) => {
+    // Mobile strip
+    mobTitleEl.textContent = e.title;
+    mobDescEl.textContent  = e.subtitle;
+    if (dist) {
+      mobDistName.textContent   = dist.name;
+      mobDistCoords.textContent = dist.coords;
+      mobDist.classList.remove('hidden');
+    } else {
+      mobDist.classList.add('hidden');
+    }
+  }
+
+  function setImg(src, pos, animate) {
+    // Remove old img elements (keep district tag div)
+    var old = stack.querySelectorAll('img');
+    if (animate) {
+      old.forEach(function (img) {
+        img.className = 'img-exit';
+        setTimeout(function () { if (img.parentNode === stack) stack.removeChild(img); }, 200);
+      });
+    } else {
+      old.forEach(function (img) { stack.removeChild(img); });
+    }
+
+    var img = document.createElement('img');
+    img.alt           = ex().title + ', image ' + (idx + 1) + ' of ' + total();
+    img.loading       = 'lazy';
+    img.decoding      = 'async';
+    img.style.objectPosition = pos;
+    img.className     = animate ? 'img-enter' : 'img-active';
+    stack.insertBefore(img, districtTag);
+    img.src = src; // set src after insertBefore so it's in DOM when load fires
+  }
+
+  function preload() {
+    var e = ex();
+    var t = total();
+    preloadImgs = [];
+    [1, -1].forEach(function (n) {
+      var pi = new Image();
+      pi.src = e.images[(idx + n + t) % t];
+      preloadImgs.push(pi);
+    });
+  }
+
+  function setBusy(b) {
+    busy = b;
+    allArrows.forEach(function (btn) { btn.classList.toggle('busy', b); });
+  }
+
+  function go(n) {
     if (busy) return;
-    const newIdx  = (idx + n + total) % total;
-    const newSrc  = exhib.images[newIdx];
-    const newPos  = objPos(newIdx);
-    const id      = ++layerId.current;
+    var e      = ex();
+    var t      = total();
+    var newIdx = (idx + n + t) % t;
+    var newSrc = e.images[newIdx];
+    var newPos = objPos(newIdx);
+
     setBusy(true);
+    idx = newIdx;
 
-    let transitioned = false;
-    const doTransition = () => {
-      if (transitioned) return;
-      transitioned = true;
-      setLayers(prev => [
-        ...prev.map(l => ({ ...l, cls: 'img-exit' })),
-        { id, src: newSrc, cls: 'img-enter', pos: newPos }
-      ]);
-      setTimeout(() => {
-        setIdx(newIdx);
-        setLayers([{ id, src: newSrc, cls: 'img-active', pos: newPos }]);
-        setBusy(false);
-      }, 220);
+    var done = false;
+    var doTransition = function () {
+      if (done) return;
+      done = true;
+      setImg(newSrc, newPos, true);
+      updateMeta();
+      preload();
+      setTimeout(function () { setBusy(false); }, 220);
     };
 
-    // Set onload BEFORE src so we never miss a fast-cache hit
-    const img = new Image();
-    img.onload  = doTransition;
-    img.onerror = doTransition;        // never leave UI stuck
-    setTimeout(doTransition, 4000);    // safety fallback after 4s
-    img.src = newSrc;
-    if (img.complete) doTransition();  // already cached — fires immediately
-  }, [busy, idx, total, exhib]);
+    var pi = new Image();
+    pi.onload  = doTransition;
+    pi.onerror = doTransition;
+    setTimeout(doTransition, 4000); // safety fallback
+    pi.src = newSrc;
+    if (pi.complete) doTransition();
+  }
 
-  useEffect(() => {
-    const h = (e) => {
-      if (e.key === 'ArrowRight') go(1);
-      if (e.key === 'ArrowLeft')  go(-1);
-    };
-    window.addEventListener('keydown', h);
-    return () => window.removeEventListener('keydown', h);
-  }, [go]);
+  function switchExhib(key) {
+    if (key === exhibKey) return;
+    exhibKey = key;
+    idx = 0;
+    setBusy(false);
+    setImg(ex().images[0], objPos(0), false);
+    updateMeta();
+    preload();
+  }
 
-  const share = () => {
-    if (navigator.share) navigator.share({ title: 'Fieldwork Gallery', url: window.location.href });
-    else navigator.clipboard && navigator.clipboard.writeText(window.location.href);
-  };
-
-  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
-  const onTouchEnd   = (e) => {
-    if (touchStartX.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(dx) > 44) go(dx < 0 ? 1 : -1);
-    touchStartX.current = null;
-  };
-
-  /* ── Shared styles ── */
-  const navBtn = (active) => ({
-    fontFamily: 'IBM Plex Mono, monospace',
-    fontSize: isMobile ? 9 : 10,
-    letterSpacing: '0.12em',
-    textTransform: 'uppercase',
-    color: active ? '#f1e9d8' : '#8a7a6e',
-    padding: isMobile ? '6px 10px' : '6px 16px',
-    paddingBottom: 4,
-    borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
-    marginBottom: -1,
-    transition: 'color .18s, border-color .18s',
-    whiteSpace: 'nowrap',
+  // ── Events ──
+  navBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () { switchExhib(btn.dataset.exhib); });
   });
 
-  const arrowBtn = {
-    width: 44, height: 44,
-    borderRadius: '50%',
-    border: '1px solid rgba(241,233,216,0.18)',
-    color: '#f1e9d8',
-    fontSize: 22,
-    fontFamily: 'Cormorant, serif',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    flexShrink: 0,
-  };
+  document.getElementById('js-desk-prev').addEventListener('click', function () { go(-1); });
+  document.getElementById('js-desk-next').addEventListener('click', function () { go(1); });
+  document.getElementById('js-mob-prev').addEventListener('click', function () { go(-1); });
+  document.getElementById('js-mob-next').addEventListener('click', function () { go(1); });
+  document.getElementById('js-mob-overlay-prev').addEventListener('click', function () { go(-1); });
+  document.getElementById('js-mob-overlay-next').addEventListener('click', function () { go(1); });
+  document.getElementById('js-site-title').addEventListener('click', function () { switchExhib('roads'); });
 
-  /* ── Desktop layout ── */
-  if (!isMobile) return (
-    <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column', background: '#1c1814', overflow: 'hidden' }}>
+  document.getElementById('js-share').addEventListener('click', function () {
+    if (navigator.share) navigator.share({ title: 'Fieldwork Gallery', url: location.href });
+    else if (navigator.clipboard) navigator.clipboard.writeText(location.href);
+  });
 
-      {/* Nav */}
-      <nav style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') go(1);
+    if (e.key === 'ArrowLeft')  go(-1);
+  });
 
-        {/* Row 1 — identity */}
-        <div style={{ height: 48, position: 'relative', display: 'flex', alignItems: 'center', padding: '0 24px 0 32px' }}>
-          <a href="https://www.princetomar.com" target="_blank" rel="noopener noreferrer" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>← Prince <span style={{ fontStyle: 'italic' }}>Tomar</span></a>
-          <button onClick={() => setExhibKey('roads')} style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Cormorant, serif', fontSize: 18, color: '#f1e9d8', opacity: 0.88, whiteSpace: 'nowrap' }}>Fieldwork Gallery</button>
-          <div style={{ flex: 1 }}></div>
-          <button onClick={share} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#8a7a6e' }}>Share</button>
-        </div>
+  var viewer = document.getElementById('js-viewer');
+  viewer.addEventListener('touchstart', function (e) {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  viewer.addEventListener('touchend', function (e) {
+    if (touchStartX === null) return;
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 44) go(dx < 0 ? 1 : -1);
+    touchStartX = null;
+  });
 
-        {/* Row 2 — exhibitions */}
-        <div style={{ height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-          {Object.entries(EXHIBS).map(([key, ex]) => (
-            <button key={key} onClick={() => setExhibKey(key)} style={navBtn(exhibKey === key)}>{ex.title}</button>
-          ))}
-        </div>
+  // ── Init ── (first image already in HTML; just sync meta + preload)
+  updateMeta();
+  preload();
 
-      </nav>
-
-      {/* Main */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-
-        {/* Left panel */}
-        <div style={{ width: 380, flexShrink: 0, display: 'flex', flexDirection: 'column', padding: '48px 48px 44px', background: '#1c1814' }}>
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ fontFamily: 'Noto Sans, sans-serif', fontSize: 44, fontWeight: 300, color: '#f1e9d8', lineHeight: 1.06, letterSpacing: '-0.01em', marginBottom: 24 }}>
-              {exhib.title}
-            </div>
-            <div style={{ width: 30, height: 1, background: 'var(--accent)', marginBottom: 26 }}></div>
-            <div style={{ fontFamily: 'Cormorant, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 18.5, color: 'rgba(241,233,216,0.68)', lineHeight: 1.82 }}>
-              {exhib.subtitle}
-              {exhib.opening && (<>
-                <br /><br />
-                {exhib.opening.split('\n').map((line, i, arr) => (
-                  <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
-                ))}
-              </>)}
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.1em', color: '#8a7a6e' }}>
-              <span style={{ color: '#f1e9d8' }}>{String(idx + 1).padStart(2, '0')}</span>{' '}—{' '}{String(total).padStart(2, '0')}
-            </div>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={() => go(-1)} style={{ ...arrowBtn, opacity: busy ? 0.35 : 1 }}>‹</button>
-              <button onClick={() => go(1)}  style={{ ...arrowBtn, opacity: busy ? 0.35 : 1 }}>›</button>
-            </div>
-          </div>
-        </div>
-
-        {/* Image */}
-        <div style={{ flex: 1, background: '#1c1814', padding: '14px 14px 14px 0', overflow: 'hidden' }}
-          onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-          <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
-            {layers.map(layer => (
-              <img key={layer.id} src={layer.src} alt="" className={layer.cls} loading="lazy" decoding="async"
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: layer.pos || 'center', display: 'block' }} />
-            ))}
-            {district && (
-              <div style={{ position: 'absolute', bottom: 28, left: 28, padding: '10px 16px', background: 'rgba(20,16,12,0.60)', backdropFilter: 'blur(8px)', pointerEvents: 'none' }}>
-                <div style={{ fontFamily: 'Cormorant, serif', fontSize: 16, color: 'var(--paper)', letterSpacing: '0.02em' }}>{district.name}</div>
-                <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: 'rgba(241,233,216,0.52)', letterSpacing: '0.1em', marginTop: 3 }}>{district.coords}</div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  /* ── Mobile layout ── */
-  return (
-    <div style={{ width: '100vw', height: '100dvh', display: 'flex', flexDirection: 'column', background: '#1c1814', overflow: 'hidden' }}>
-
-      {/* Nav row 1 — identity */}
-      <nav style={{ height: 48, flexShrink: 0, display: 'flex', alignItems: 'center', padding: '0 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', gap: 12 }}>
-        <a href="https://www.princetomar.com" target="_blank" rel="noopener noreferrer" id="portfolio-link" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>← Prince <span style={{ fontStyle: 'italic' }}>Tomar</span></a>
-        <div style={{ flex: 1, textAlign: 'center', fontFamily: 'Cormorant, serif', fontSize: 16, color: '#f1e9d8', opacity: 0.88 }}>Fieldwork Gallery</div>
-        <button onClick={share} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#8a7a6e', flexShrink: 0 }}>Share</button>
-      </nav>
-
-      {/* Nav row 2 — exhibitions */}
-      <div style={{ height: 36, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', gap: 4 }}>
-        {Object.entries(EXHIBS).map(([key, ex]) => (
-          <button key={key} onClick={() => setExhibKey(key)} style={navBtn(exhibKey === key)}>{ex.title}</button>
-        ))}
-      </div>
-
-      {/* Image — fills all remaining space */}
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}
-        onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-        {layers.map(layer => (
-          <img key={layer.id} src={layer.src} alt="" className={layer.cls} loading="lazy" decoding="async"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: layer.pos || 'center', display: 'block' }} />
-        ))}
-        {/* Visible nav arrows overlaid on image */}
-        <button onClick={() => go(-1)} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', ...arrowBtn, opacity: busy ? 0.2 : 0.72, zIndex: 2, background: 'rgba(20,16,12,0.35)', backdropFilter: 'blur(4px)' }}>‹</button>
-        <button onClick={() => go(1)}  style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', ...arrowBtn, opacity: busy ? 0.2 : 0.72, zIndex: 2, background: 'rgba(20,16,12,0.35)', backdropFilter: 'blur(4px)' }}>›</button>
-      </div>
-
-      {/* Bottom strip — title, district, counter + arrows */}
-      <div style={{ flexShrink: 0, padding: '12px 20px 20px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <div style={{ fontFamily: 'Noto Sans, sans-serif', fontSize: 20, fontWeight: 300, color: '#f1e9d8', lineHeight: 1.1 }}>
-            {exhib.title}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#8a7a6e' }}>
-              <span style={{ color: '#f1e9d8' }}>{String(idx + 1).padStart(2, '0')}</span>{' '}—{' '}{String(total).padStart(2, '0')}
-            </div>
-            <button onClick={() => go(-1)} style={{ ...arrowBtn, opacity: busy ? 0.35 : 1 }}>‹</button>
-            <button onClick={() => go(1)}  style={{ ...arrowBtn, opacity: busy ? 0.35 : 1 }}>›</button>
-          </div>
-        </div>
-        <div style={{ marginTop: 5, fontFamily: 'Cormorant, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 14, color: 'rgba(241,233,216,0.52)', lineHeight: 1.55 }}>
-          {exhib.subtitle}
-        </div>
-        {district && (
-          <div style={{ marginTop: 8, display: 'flex', alignItems: 'baseline', gap: 10 }}>
-            <span style={{ fontFamily: 'Cormorant, serif', fontSize: 13, color: 'rgba(241,233,216,0.55)' }}>{district.name}</span>
-            <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, color: '#8a7a6e', letterSpacing: '0.08em' }}>{district.coords}</span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<Gallery />);
+}());
 </script>
 </body>
 </html>
